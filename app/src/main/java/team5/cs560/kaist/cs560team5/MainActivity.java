@@ -1,6 +1,9 @@
 package team5.cs560.kaist.cs560team5;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,8 +14,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 public class MainActivity extends ActionBarActivity implements OnItemClickListener {
 
@@ -38,6 +49,13 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         listView.setAdapter(itemsAdapter);
 
         listView.setOnItemClickListener((OnItemClickListener) this);
+    }
+
+    public void onStart()
+    {
+        super.onStart();
+
+
     }
 
     public void onItemClick(AdapterView<?> partent, View v, final int position, long id)

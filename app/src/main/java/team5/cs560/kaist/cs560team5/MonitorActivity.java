@@ -1,9 +1,14 @@
 package team5.cs560.kaist.cs560team5;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MonitorActivity extends ActionBarActivity {
@@ -12,6 +17,40 @@ public class MonitorActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor);
+
+        // Preference file에서 모니터링할 이름 불러옴
+        SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
+        int pn = mPref.getInt("protegeno", 0);
+        //Toast.makeText(this, json_str, Toast.LENGTH_SHORT).show();
+        try {
+            String a = "";
+            List<String> proteges_list = new ArrayList<String>();
+            int i;
+            for(i = 1; i <= pn; ++i)
+            {
+                proteges_list.add(mPref.getString("protege"+i, null));
+                a += mPref.getString("protege"+i, null);
+            }
+            //Toast.makeText(this, a, Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 심장박동 수 및 거리, 좌표 불러옴
+        Float hr = mPref.getFloat("hr", 0);
+        Float dist = mPref.getFloat("dist", 0);
+        Float la1 = mPref.getFloat("la1", 0);
+        Float lo1 = mPref.getFloat("lo1", 0);
+        Float la2 = mPref.getFloat("la2", 0);
+        Float lo2 = mPref.getFloat("lo2", 0);
+
+        //// 이 아래에 나머지 구현
+
+        
+
+
+
+
     }
 
     @Override
