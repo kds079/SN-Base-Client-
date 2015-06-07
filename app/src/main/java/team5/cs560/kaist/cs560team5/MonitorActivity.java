@@ -18,7 +18,7 @@ public class MonitorActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor);
 
-        // Preference file에서 모니터링할 이름 불러옴
+        // Preference file
         SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
         int pn = mPref.getInt("protegeno", 0);
         //Toast.makeText(this, json_str, Toast.LENGTH_SHORT).show();
@@ -36,7 +36,7 @@ public class MonitorActivity extends ActionBarActivity {
             e.printStackTrace();
         }
 
-        // 심장박동 수 및 거리, 좌표 불러옴
+        //
         Float hr = mPref.getFloat("hr", 0);
         Float dist = mPref.getFloat("dist", 0);
         Float la1 = mPref.getFloat("la1", 0);
@@ -44,7 +44,7 @@ public class MonitorActivity extends ActionBarActivity {
         Float la2 = mPref.getFloat("la2", 0);
         Float lo2 = mPref.getFloat("lo2", 0);
 
-        //// 이 아래에 나머지 구현
+        ////
 
         
 
