@@ -64,7 +64,7 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
                                 float x = Ev.getX();
                                 float y = Ev.getY();
                                 mtView.setText("Coord: " + x + ", " + y + " tc: " + tcount);
-                                lo[tcount] = x;
+                                la[tcount] = x;
                                 lo[tcount] = y;
                                 tcount++;
 
@@ -120,10 +120,10 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
         try {
             editor.putFloat("hr", Float.parseFloat(hr.getText().toString()));
             editor.putFloat("dist", Float.parseFloat(dist.getText().toString()));
-            editor.putFloat("lo0", lo[0]);
-            editor.putFloat("lo1", lo[1]);
-            editor.putFloat("la0", la[0]);
-            editor.putFloat("la1", la[1]);
+            editor.putFloat("lo1", lo[0]);
+            editor.putFloat("lo2", lo[1]);
+            editor.putFloat("la1", la[0]);
+            editor.putFloat("la2", la[1]);
 
     //r        editor.putFloat("la1", Float.parseFloat(la1.getText().toString()));
     //        editor.putFloat("lo1", Float.parseFloat(lo1.getText().toString()));
