@@ -15,7 +15,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:stretchColumns="0,1"
-        android:layout_gravity="top">
+        android:layout_gravity="top"
+        android:id="@+id/tableLayout">
 
         <TableRow
             android:layout_width="match_parent"
@@ -163,6 +164,14 @@
 
     </TableLayout>
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/mapimage1"
+        android:id="@+id/imageView"
+        android:layout_below="@+id/tableLayout"
+        android:layout_centerHorizontal="true" />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -170,5 +179,7 @@
         android:id="@+id/settingApply"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
+
+
 
 </RelativeLayout>
