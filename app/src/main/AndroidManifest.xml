@@ -28,6 +28,12 @@
             android:name=".MonitorActivity"
             android:label="@string/title_activity_monitor" >
         </activity>
+
+        <service
+            android:name=".notiService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>
