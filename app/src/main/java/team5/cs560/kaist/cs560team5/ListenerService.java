@@ -2,7 +2,10 @@ package team5.cs560.kaist.cs560team5;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.sql.Timestamp;
@@ -61,7 +64,13 @@ public class ListenerService extends Service  {
 
         @Override
         public void onConnect() {
+            String queryStmt = null;
+            PlanKey planKey = null;
+            System.out.println("==>>>  Query time : " + new Timestamp(new Date().getTime()));
 
+            queryStmt = "SELECT name, birth, phoneno, teamno, hr, latitude, longitude, timestamp()\n"
+                    + "FROM node, profile, gps";
+            new ProcessGetUser().execute(null, null, null);
 //        String queryStmt = null;
 //        PlanKey planKey = null;
 //        System.out.println("==>>>  Query time : " + new Timestamp(new Date().getTime()));
@@ -98,11 +107,17 @@ public class ListenerService extends Service  {
         @Override
         public void onReceiveResult(PlanKey planKey, ResultTable table) {
             printResult(planKey, table);
-            Intent intent = new Intent(getApplicationContext(), SelectActivity.class);
-            intent.putExtra("name", "dskim");
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getApplicationContext().startActivity(intent);
-//            getApplicationContext().finish();
+//            Intent intent = new Intent(getApplicationContext(), SelectActivity.class);
+//            intent.putExtra("name", "dskim");
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            getApplicationContext().startActivity(intent);
+
+            SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences.Editor editor = mPref.edit();
+            editor.putString("user", "dskim111");
+//            editor.putInt("protegeno", n);
+            //Toast.makeText(this, a.toString(), Toast.LENGTH_SHORT).show();
+            editor.commit();
         }
 
         void printResult(PlanKey planKey, ResultTable table){
@@ -128,6 +143,26 @@ public class ListenerService extends Service  {
                 sb.setLength(0);
             }
             System.out.println("==================================================");
+        }
+
+        private class ProcessGetUser extends AsyncTask<Void, Void, Void> {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try
+                {
+                    Log.v("dskim", "==>>>  Query time : " + new Timestamp(new Date().getTime()));
+                    String queryStmt = "SELECT name, birth, phoneno, teamno, hr, latitude, longitude, timestamp()\n"
+                            + "FROM node, profile, gps";
+//                planKey = clientConnector.executeQuery(queryStmt);
+                    ClientConnector clientConnector = ListenerService.getServiceObject().getClientConnector();
+                    clientConnector.executeQuery(queryStmt);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                return null;
+            }
         }
     }
 }

@@ -53,9 +53,12 @@ public class SelectActivity extends ActionBarActivity implements View.OnClickLis
             /*
             add query results heere
              */
-            proteges.add("LanaKim");
-            proteges.add("Acky");
-            proteges.add("HAHAH");
+            SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
+            String user = mPref.getString("user", "default");
+            proteges.add(user);
+//            proteges.add("LanaKim");
+//            proteges.add("Acky");
+//            proteges.add("HAHAH");
 
             String queryStmt = null;
             PlanKey planKey = null;
@@ -63,7 +66,7 @@ public class SelectActivity extends ActionBarActivity implements View.OnClickLis
 
             queryStmt = "SELECT name, birth, phoneno, teamno, hr, latitude, longitude, timestamp()\n"
                     + "FROM node, profile, gps";
-            new ProcessGetUser().execute(null, null, null);
+//            new ProcessGetUser().execute(null, null, null);
 
         }
         checkboxes = new boolean[proteges.size()];
