@@ -1,9 +1,11 @@
 package team5.cs560.kaist.cs560team5;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -13,12 +15,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import org.json.JSONArray;
-
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+
+import kr.ac.kaist.idb.snql.connector.ClientConnector;
+import kr.ac.kaist.idb.snql.planner.PlanKey;
 
 
 public class SelectActivity extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
@@ -40,13 +44,28 @@ public class SelectActivity extends ActionBarActivity implements View.OnClickLis
         Log.v("lanakim", "1");
 
         proteges = new ArrayList<String>();
-        /*
-        add query results heere
-         */
-        proteges.add("LanaKim");
-        proteges.add("Acky");
-        proteges.add("HAHAH");
 
+        Intent intent = getIntent();
+        String name = intent.getStringExtra("name");
+        if(name != null){
+            proteges.add(name);
+        } else {
+            /*
+            add query results heere
+             */
+            proteges.add("LanaKim");
+            proteges.add("Acky");
+            proteges.add("HAHAH");
+
+            String queryStmt = null;
+            PlanKey planKey = null;
+            System.out.println("==>>>  Query time : " + new Timestamp(new Date().getTime()));
+
+            queryStmt = "SELECT name, birth, phoneno, teamno, hr, latitude, longitude, timestamp()\n"
+                    + "FROM node, profile, gps";
+            new ProcessGetUser().execute(null, null, null);
+
+        }
         checkboxes = new boolean[proteges.size()];
         Arrays.fill(checkboxes, false);
 
@@ -65,6 +84,29 @@ public class SelectActivity extends ActionBarActivity implements View.OnClickLis
         Log.v("lanakim", "5");
 
         selectListView.setOnItemClickListener(this);
+
+
+    }
+
+    private class ProcessGetUser extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try
+            {
+                Log.v("dskim", "==>>>  Query time : " + new Timestamp(new Date().getTime()));
+                String queryStmt = "SELECT name, birth, phoneno, teamno, hr, latitude, longitude, timestamp()\n"
+                        + "FROM node, profile, gps";
+//                planKey = clientConnector.executeQuery(queryStmt);
+                ClientConnector clientConnector = ListenerService.getServiceObject().getClientConnector();
+                clientConnector.executeQuery(queryStmt);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     public void onClick(View v)
