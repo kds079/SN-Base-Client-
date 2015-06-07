@@ -26,15 +26,14 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set);
-/*
-        hr = (EditText)findViewById(R.id.settingHR);
-        dist = (EditText)findViewById(R.id.settingDist);
-        la1 = (EditText)findViewById(R.id.setingLa1);
-        lo1 = (EditText)findViewById(R.id.settingLo1);
-        la2 = (EditText)findViewById(R.id.settingLa2);
-        lo2 = (EditText)findViewById(R.id.settingLo2);
+
+        hr = (EditText)findViewById(R.id.editHR);
+        dist = (EditText)findViewById(R.id.editDIST);
+        la1 = (EditText)findViewById(R.id.editLa1);
+        lo1 = (EditText)findViewById(R.id.editLo1);
+        la2 = (EditText)findViewById(R.id.editLa2);
+        lo2 = (EditText)findViewById(R.id.editLo2);
         applySetting = (Button)findViewById(R.id.settingApply);
-*/
         applySetting.setOnClickListener(this);
 
 
