@@ -1,20 +1,25 @@
 package team5.cs560.kaist.cs560team5;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class MonitorActivity extends ActionBarActivity {
-
+    private TextView mtView = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        mtView = (TextView) findViewById(R.id.mtextView2);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor);
 
@@ -43,7 +48,11 @@ public class MonitorActivity extends ActionBarActivity {
         Float lo1 = mPref.getFloat("lo1", 0);
         Float la2 = mPref.getFloat("la2", 0);
         Float lo2 = mPref.getFloat("lo2", 0);
-
+        Log.d("tags","DIST: "+dist);
+        Log.d("tags","HR: "+hr);
+        Log.d("tags","La/Lo1: "+la1+","+lo1);
+        Log.d("tags","La/lo2: "+la2+","+lo2);
+        //mtView.setText("hr: "+hr+", dist: "+dist+"\n la1"+la1+" lo1 "+lo1+" la2 "+la2+" lo2 "+lo2);
         ////
 
         
