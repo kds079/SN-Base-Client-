@@ -133,6 +133,7 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
         }catch(Exception e_empty){
             ;//not commit();
         }
+        MainActivity.isSetFlag = true;
         Log.d("tag", "here3?");
 
         finish();

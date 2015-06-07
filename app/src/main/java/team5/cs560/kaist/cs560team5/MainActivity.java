@@ -18,7 +18,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
     private ListView listView;
     private ArrayList<String> items;
     private ArrayAdapter<String> itemsAdapter;
-
+    public static boolean isSetFlag = false;
+    public static boolean isDestroy = false;
 
 
     @Override
@@ -42,6 +43,12 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
         listView.setAdapter(itemsAdapter);
 
         listView.setOnItemClickListener((OnItemClickListener) this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        isDestroy = true;
+        super.onDestroy();
     }
 
     public void onStart()
