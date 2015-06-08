@@ -29,8 +29,8 @@ public class MainActivity extends ActionBarActivity implements OnItemClickListen
 
         // author: Jaeseong
         // to Service connection to DB and notification
-        Intent Service = new Intent(this, notiService.class);
-        startService(Service);
+//        Intent Service = new Intent(this, notiService.class);
+//        startService(Service);
 
         Intent listenerService = new Intent(this, ListenerService.class);
         startService(listenerService);

@@ -45,6 +45,10 @@ public class ListenerService extends Service  {
         Log.d("dskim", "construct ListenerService");
     }
 
+    public void setQueryMap(PlanKey planKey, String query){
+        queryMap.put(planKey, query);
+    }
+
     public static ListenerService getServiceObject(){
         return self;
     }
@@ -70,7 +74,7 @@ public class ListenerService extends Service  {
         @Override
         public void onConnect() {
             PlanKey planKey = null;
-            new ProcessGetUser().execute(null, null, null);
+//            new ProcessGetUser().execute(null, null, null);
 //        String queryStmt = null;
 //        PlanKey planKey = null;
 //        Log.D("dskim", "==>>>  Query time : " + new Timestamp(new Date().getTime()));
@@ -113,8 +117,12 @@ public class ListenerService extends Service  {
 //            getApplicationContext().startActivity(intent);
 
             if( "getUser".equals(queryMap.get(planKey))) {
+                Log.d("dskim", "onReceiveResut : getUser");
                 setUserList(table);
                 queryMap.remove(planKey);
+            } else{
+                Log.d("dskim", "onReceiveResut : event");
+                ;
             }
         }
 
@@ -151,7 +159,7 @@ public class ListenerService extends Service  {
             Object[] tuples = null;
             StringBuffer sb = new StringBuffer();
             Log.d("dskim", "==================================================");
-            Log.d("dskim", "==>>>  Resp time : " + new Timestamp(new Date().getTime()));
+            Log.d("dskim", "==>>>  PlanKey : " + planKey + " - Resp time : " + new Timestamp(new Date().getTime()));
             Log.d("dskim", "size : " + table.size());
 
             for ( Attribute attr : attrs){
