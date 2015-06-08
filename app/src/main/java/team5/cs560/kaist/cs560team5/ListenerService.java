@@ -1,10 +1,21 @@
 package team5.cs560.kaist.cs560team5;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -32,6 +43,8 @@ public class ListenerService extends Service  {
     private LocationManager mLocMgr;
     private double protectorLocationLat;
     private double protectorLocationLon;
+    private boolean gpsFlag = false;
+    private double distance;
 
 
     public ListenerService(){
@@ -79,6 +92,7 @@ public class ListenerService extends Service  {
         public void onLocationChanged(Location location) {
             protectorLocationLat = location.getLatitude();
             protectorLocationLon = location.getLongitude();
+            gpsFlag = true;
         }
 
         public void onProviderDisabled(String provider) {
@@ -132,7 +146,7 @@ public class ListenerService extends Service  {
         @Override
         public void onConnect() {
             PlanKey planKey = null;
-//            new ProcessGetUser().execute(null, null, null);
+            new ProcessGetUser().execute(null, null, null);
 //        String queryStmt = null;
 //        PlanKey planKey = null;
 //        Log.D("dskim", "==>>>  Query time : " + new Timestamp(new Date().getTime()));
@@ -173,6 +187,13 @@ public class ListenerService extends Service  {
 //            intent.putExtra("name", "dskim");
 //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            getApplicationContext().startActivity(intent);
+            SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            Float hr = mPref.getFloat("hr", 0);
+            Float dist = mPref.getFloat("dist", 0);
+            Float la1 = mPref.getFloat("la1", 0);
+            Float lo1 = mPref.getFloat("lo1", 0);
+            Float la2 = mPref.getFloat("la2", 0);
+            Float lo2 = mPref.getFloat("lo2", 0);
 
             if( "getUser".equals(queryMap.get(planKey))) {          //for Select Activity
                 Log.d("dskim", "onReceiveResut : getUser");
@@ -184,6 +205,13 @@ public class ListenerService extends Service  {
                 //gps[0] : latitude
                 //gps[1] : longitude
                 //if distance condition
+                if (gpsFlag) {
+                    distance = Math.sqrt( Math.pow((protectorLocationLat - gps[0]), 2) + Math.pow((protectorLocationLon - gps[1]), 2) );
+                    // activate when distance_threshold is defined
+                    if (distance > dist) {
+                        startDistNoti();
+                    }
+                }
 //                startDistNoti();
 
                 new ProcessDistQuery().execute(null, null, null);
@@ -213,13 +241,35 @@ public class ListenerService extends Service  {
 
         private void startDistNoti(){
             NotificationManager nm2 = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);   // call notification manager
-            Notification notification2 = new Notification(R.mipmap.distance, "Warnning! far from you!", System.currentTimeMillis());   // icon, tickerText, when
+            Notification notification2 = new Notification(R.mipmap.distance, "Warning! far from you!", System.currentTimeMillis());   // icon, tickerText, when
             notification2.flags = Notification.FLAG_AUTO_CANCEL;
             notification2.defaults = Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
             notification2.number = 13;
             PendingIntent pendingIntent2 = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), MonitorActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
             notification2.setLatestEventInfo(getApplicationContext(), "Far from you!", "Your child too far from you!!", pendingIntent2);   // context, contentTitle, contentText, contentIntent
             nm2.notify(1236, notification2);  // id, notification object
+        }
+
+        private void startHeartNoti() {
+            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);   // call notification manager
+            Notification notification = new Notification(R.mipmap.heart_attack, "Warning! Heart Attack!", System.currentTimeMillis());   // icon, tickerText, when
+            notification.flags = Notification.FLAG_AUTO_CANCEL;
+            notification.defaults = Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+            notification.number = 13;
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), MonitorActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+            notification.setLatestEventInfo(getApplicationContext(), "Heart Attack!", "Heart attack is happend!!", pendingIntent);   // context, contentTitle, contentText, contentIntent
+            nm.notify(1234, notification);  // id, notification object
+        }
+
+        private void startEscapeNoti() {
+            NotificationManager nm1 = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);   // call notification manager
+            Notification notification1 = new Notification(R.mipmap.escape, "Warning! Escape!", System.currentTimeMillis());   // icon, tickerText, when
+            notification1.flags = Notification.FLAG_AUTO_CANCEL;
+            notification1.defaults = Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+            notification1.number = 13;
+            PendingIntent pendingIntent1 = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), MonitorActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+            notification1.setLatestEventInfo(getApplicationContext(), "Escape!", "Your child escape from range!!", pendingIntent1);   // context, contentTitle, contentText, contentIntent
+            nm1.notify(1235, notification1);  // id, notification object
         }
 
         private void setUserList(ResultTable table){
