@@ -167,7 +167,13 @@
         android:src="@mipmap/mapimage1"
         android:id="@+id/mapimage1"
         android:layout_below="@+id/tableLayout"
-        android:layout_centerHorizontal="true" />
+        android:scaleType="fitXY" />
+    <ImageView
+        android:id="@+id/outside_imageview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/mapimage1"
+        android:scaleType="fitXY"/>
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

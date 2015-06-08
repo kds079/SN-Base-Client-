@@ -1,10 +1,16 @@
 package team5.cs560.kaist.cs560team5;
 
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -14,6 +20,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
+import kr.ac.kaist.idb.snql.connector.ClientConnector;
+import kr.ac.kaist.idb.snql.planner.PlanKey;
+
 
 public class SetActivity extends ActionBarActivity implements View.OnClickListener{
 
@@ -21,12 +33,17 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
     private EditText dist;
     private float la[];
     private float lo[];
-    private ImageView im1;
+    private ImageView imageInside;
+    private ImageView imageOutside;
     private Button applySetting;
     private int tcount;
     private TextView mtView = null;
-   // private View mdView = null;
-    //private TipsView mtipView = null;
+    private Bitmap bmap;
+    private Canvas cvas;
+    private Paint paint;
+
+    private float downx =0,downy=0, upx=0, upy=0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,49 +55,50 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
         dist = (EditText)findViewById(R.id.editDIST);
         la = new float[2];
         lo = new float[2];
-     //   la1 = (EditText)findViewById(R.id.editLa1);
-     //   lo1 = (EditText)findViewById(R.id.editLo1);
-     //   la2 = (EditText)findViewById(R.id.editLa2);
-     //   lo2 = (EditText)findViewById(R.id.editLo2);
-        im1 = (ImageView) findViewById(R.id.mapimage1);
+        imageInside = (ImageView) findViewById(R.id.mapimage1);
+        imageOutside = (ImageView) findViewById(R.id.outside_imageview);
         mtView = (TextView) findViewById(R.id.mtextView);
+        Display currentDisplay = getWindowManager().getDefaultDisplay();
+        float dw = currentDisplay.getWidth();
+        float dh = currentDisplay.getHeight();
+
+        bmap = Bitmap.createBitmap((int) dw, (int) dh, Bitmap.Config.ARGB_8888);
+        cvas = new Canvas(bmap);
+        paint = new Paint();
+        paint.setColor(Color.RED);
+        imageOutside.setImageBitmap(bmap);
         //mdView = (View)findViewById(R.id.mView1);
         //mtipView = (TipsView) findViewById(R.id.mTipsView);
 
         //mtipView.setOnTouchListener();
 
-        im1.setOnTouchListener(new View.OnTouchListener(){
+        imageOutside.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent Ev) {
                 //mtipView.setOnTouchListener(this);
-                if (view == findViewById(R.id.mapimage1)) {
-
-                    switch(Ev.getAction()){
+                if (view == findViewById(R.id.outside_imageview)) {
+                    switch (Ev.getAction()) {
                         case MotionEvent.ACTION_DOWN:
-                        //case MotionEvent.ACTION_MOVE:
-                            if(tcount < 2) {
+                            //case MotionEvent.ACTION_MOVE:
+                            if (tcount < 2) {
 
                                 float x = Ev.getX();
                                 float y = Ev.getY();
                                 mtView.setText("Coord: " + x + ", " + y + " tc: " + tcount);
                                 la[tcount] = x;
                                 lo[tcount] = y;
-                                tcount++;
-
+                                cvas.drawCircle(x, y, 7, paint);
+                                if (tcount == 1) {
+                                    cvas.drawRect(la[0],lo[0],la[1], lo[1],paint);
+                                }
                             }
-
+                            tcount++;
                     }
-                    /*
-                    if(tcount < 2) {
-                        switch
-
-                        //Log.d("tag", "click" + x + ", " + y);
-                    }
-                    */
                 }
                 return true;
             }
+
         });
 
 
@@ -134,8 +152,54 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
             ;//not commit();
         }
         MainActivity.isSetFlag = true;
-        Log.d("tag", "here3?");
+        Log.d("jplee", "here3?");
 
+        new ProcessSetHrEvent().execute(null, null, null);
         finish();
+    }
+
+    private class ProcessSetHrEvent extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            try
+            {
+                SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                Float hr = mPref.getFloat("hr", 0);
+                Float dist = mPref.getFloat("dist", 0);
+                Float la1 = mPref.getFloat("la1", 0);
+                Float lo1 = mPref.getFloat("lo1", 0);
+                Float la2 = mPref.getFloat("la2", 0);
+                Float lo2 = mPref.getFloat("lo2", 0);
+
+                ListenerService listenerService = ListenerService.getServiceObject();
+                ClientConnector clientConnector = listenerService.getClientConnector();
+
+                String queryStmt = null;
+                PlanKey planKey = null;
+                //Event query for hr, region
+//                String queryStmt = "CREATE EVENT heart_rate_event_1\n"
+//                        + "FROM node WHEN hr < " + hr;// + " AND " + ;
+//                PlanKey planKey = clientConnector.executeQuery(queryStmt);
+//
+//                queryStmt = "ON EVENT (heart_rate_event_1, 3s, 120s, REPEAT)\n"
+//                        + "SELECT name, hr, latitude, longitude, timestamp() FROM node, profile, gps";
+////				+ "WHERE name='test kim'";
+//                planKey = clientConnector.executeQuery(queryStmt);
+//                listenerService.setQueryMap(planKey, "HrEvent");
+//                Log.v("dskim", "==>>>  planKey : " + planKey + "Query time : " + new Timestamp(new Date().getTime()));
+
+                //Select query for distance event
+                queryStmt = "SELECT name, latitude, longitude, timestamp()\n"
+				        + "FROM profile, gps";
+        		planKey = clientConnector.executeQuery(queryStmt);
+                listenerService.setQueryMap(planKey, "DistEvent");
+                Log.v("dskim", "==>>>  planKey : " + planKey + "Query time for distance event : " + new Timestamp(new Date().getTime()));
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 }
