@@ -43,6 +43,8 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
     private Canvas cvas;
     private Paint paintR;
     private Paint paintC;
+    private int dw;
+    private int dh;
 
 
 
@@ -62,15 +64,15 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
         Display currentDisplay = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         currentDisplay.getSize(size);
-        int dw = size.x;
-        int dh = size.y;
+        dw = size.x;
+        dh = (int)((float)size.y*0.7);
 
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) imageInside.getLayoutParams();
         params.width = 720;
         params.height = 720;
         imageInside.setLayoutParams(params);
 
-        bmap = Bitmap.createBitmap((int) dw, (int) (dh*0.7), Bitmap.Config.ARGB_8888);
+        bmap = Bitmap.createBitmap((int) dw, (int) dh, Bitmap.Config.ARGB_8888);
         //bmap.eraseColor(Color.GRAY);
         cvas = new Canvas(bmap);
         paintR = new Paint();
@@ -97,11 +99,11 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
                                 float x = Ev.getX();
                                 float y = Ev.getY();
                                 //mtView.setText("Coord: " + x + ", " + y + " tc: " + tcount);
-                                la[tcount] = x;
-                                lo[tcount] = y;
+                                la[tcount] = y;
+                                lo[tcount] = x;
                                 cvas.drawCircle(x, y, 12, paintC);
                                 if (tcount == 1) {
-                                    cvas.drawRect(la[0],lo[0],la[1], lo[1],paintR);
+                                    cvas.drawRect(lo[0],la[0],lo[1],la[1], paintR);
                                 }
                             }
                             tcount++;
@@ -149,6 +151,21 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
         try {
             editor.putFloat("hr", Float.parseFloat(hr.getText().toString()));
             editor.putFloat("dist", Float.parseFloat(dist.getText().toString()));
+
+            //left top 36.374515, 127.355249  //right bottom 36.362947, 127.370162
+            double upper_la = 36.374515;
+            double lower_la = 36.362947;
+            double upper_lo = 127.370162;
+            double lower_lo = 127.355249;
+            double realW = upper_lo - lower_lo;
+            double realH = upper_la - lower_la;
+            Log.d("jplee","before scale:" + lo[0]+","+la[0]+"//"+lo[1]+","+la[1]);
+            lo[0] =(float) upper_lo - (float)(realW * ( ((double)dw - (double)lo[0]) /(double)dw ));
+            lo[1] =(float) upper_lo - (float)(realW * ( ((double)dw - (double)lo[1]) /(double)dw ));
+            la[0] =(float) lower_la + (float)(realH * ( ((double)dh - (double)la[0]) /(double)dh ));
+            la[1] =(float) lower_la + (float)(realH * ( ((double)dh - (double)la[1]) /(double)dh ));
+
+            Log.d("jplee","after scale:" + la[0]+","+lo[0]+"//"+la[1]+","+lo[1]);
             editor.putFloat("lo1", lo[0]);
             editor.putFloat("lo2", lo[1]);
             editor.putFloat("la1", la[0]);
