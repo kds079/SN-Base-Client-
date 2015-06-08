@@ -163,19 +163,37 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
         protected Void doInBackground(Void... params) {
             try
             {
+                SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                Float hr = mPref.getFloat("hr", 0);
+                Float dist = mPref.getFloat("dist", 0);
+                Float la1 = mPref.getFloat("la1", 0);
+                Float lo1 = mPref.getFloat("lo1", 0);
+                Float la2 = mPref.getFloat("la2", 0);
+                Float lo2 = mPref.getFloat("lo2", 0);
+
                 ListenerService listenerService = ListenerService.getServiceObject();
                 ClientConnector clientConnector = listenerService.getClientConnector();
 
-                String queryStmt = "CREATE EVENT heart_rate_event_1\n"
-                        + "FROM node WHEN hr < 100";
-                PlanKey planKey = clientConnector.executeQuery(queryStmt);
+                String queryStmt = null;
+                PlanKey planKey = null;
+                //Event query for hr, region
+//                String queryStmt = "CREATE EVENT heart_rate_event_1\n"
+//                        + "FROM node WHEN hr < " + hr;// + " AND " + ;
+//                PlanKey planKey = clientConnector.executeQuery(queryStmt);
+//
+//                queryStmt = "ON EVENT (heart_rate_event_1, 3s, 120s, REPEAT)\n"
+//                        + "SELECT name, hr, latitude, longitude, timestamp() FROM node, profile, gps";
+////				+ "WHERE name='test kim'";
+//                planKey = clientConnector.executeQuery(queryStmt);
+//                listenerService.setQueryMap(planKey, "HrEvent");
+//                Log.v("dskim", "==>>>  planKey : " + planKey + "Query time : " + new Timestamp(new Date().getTime()));
 
-                queryStmt = "ON EVENT (heart_rate_event_1, 3s, 120s, REPEAT)\n"
-                        + "SELECT name, hr, latitude, longitude, timestamp() FROM node, profile, gps";
-//				+ "WHERE name='test kim'";
-                planKey = clientConnector.executeQuery(queryStmt);
-                listenerService.setQueryMap(planKey, "HrEvent");
-                Log.v("dskim", "==>>>  planKey : " + planKey + "Query time : " + new Timestamp(new Date().getTime()));
+                //Select query for distance event
+                queryStmt = "SELECT name, latitude, longitude, timestamp()\n"
+				        + "FROM profile, gps";
+        		planKey = clientConnector.executeQuery(queryStmt);
+                listenerService.setQueryMap(planKey, "DistEvent");
+                Log.v("dskim", "==>>>  planKey : " + planKey + "Query time for distance event : " + new Timestamp(new Date().getTime()));
             }
             catch (Exception e)
             {
