@@ -9,7 +9,10 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import kr.ac.kaist.idb.snql.connector.ClientConnector;
 import kr.ac.kaist.idb.snql.connector.ClientConnectorListener;
@@ -25,6 +28,7 @@ public class ListenerService extends Service  {
     private static ListenerService self;
     private ClientListener clientListener;
     private ClientConnector clientConnector;
+    private Map queryMap;
 
     public ListenerService(){
         clientListener = new ClientListener();
@@ -37,6 +41,7 @@ public class ListenerService extends Service  {
         clientConnector.setListener(clientListener);
 //        clientConnector.setListener(new ListenerService(clientConnector, ClientConnectionHandler.context));
         new ConnectionThread(clientConnector).start();
+        queryMap = new HashMap<PlanKey, String>();
         Log.d("dskim", "construct ListenerService");
     }
 
@@ -64,12 +69,7 @@ public class ListenerService extends Service  {
 
         @Override
         public void onConnect() {
-            String queryStmt = null;
             PlanKey planKey = null;
-            System.out.println("==>>>  Query time : " + new Timestamp(new Date().getTime()));
-
-            queryStmt = "SELECT name, birth, phoneno, teamno, hr, latitude, longitude, timestamp()\n"
-                    + "FROM node, profile, gps";
             new ProcessGetUser().execute(null, null, null);
 //        String queryStmt = null;
 //        PlanKey planKey = null;
@@ -112,26 +112,44 @@ public class ListenerService extends Service  {
 //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            getApplicationContext().startActivity(intent);
 
-            SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            SharedPreferences.Editor editor = mPref.edit();
-            editor.putString("user", "dskim111");
-//            editor.putInt("protegeno", n);
-            //Toast.makeText(this, a.toString(), Toast.LENGTH_SHORT).show();
-            editor.commit();
+            if( "getUser".equals(queryMap.get(planKey))) {
+                SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = mPref.edit();
+                ArrayList<String> users = getUser(table);
+                for(int i=0; i<users.size(); i++) {
+                    editor.putString("user"+i, users.get(i));
+                }
+                editor.putInt("userSize", users.size());
+                //Toast.makeText(this, a.toString(), Toast.LENGTH_SHORT).show();
+                editor.commit();
+                queryMap.remove(planKey);
+            }
+        }
+
+        ArrayList<String> getUser(ResultTable table){
+            ArrayList<String> users = new ArrayList<String>();
+            Object[] tuples = null;
+            table.reset();
+            while (table.hasNext()) {
+                tuples = table.getTuple();
+                users.add((String)tuples[0]);
+            }
+
+            return users;
         }
 
         void printResult(PlanKey planKey, ResultTable table){
             Attribute[] attrs = table.getAttributes();
             Object[] tuples = null;
             StringBuffer sb = new StringBuffer();
-            System.out.println("==================================================");
-            System.out.println("==>>>  Resp time : " + new Timestamp(new Date().getTime()));
-            System.out.println("size : " + table.size());
+            Log.d("dskim", "==================================================");
+            Log.d("dskim", "==>>>  Resp time : " + new Timestamp(new Date().getTime()));
+            Log.d("dskim", "size : " + table.size());
 
             for( Attribute attr : attrs){
                 sb.append(attr.getName() + " | ");
             }
-            System.out.println(sb);
+            Log.d("dskim", sb.toString());
             sb.setLength(0);
 
             while (table.hasNext()) {
@@ -139,10 +157,10 @@ public class ListenerService extends Service  {
                 for( Object tuple : tuples){
                     sb.append(tuple + " | ");
                 }
-                System.out.println(sb);
+                Log.d("dskim", sb.toString());
                 sb.setLength(0);
             }
-            System.out.println("==================================================");
+            Log.d("dskim", "==================================================");
         }
 
         private class ProcessGetUser extends AsyncTask<Void, Void, Void> {
@@ -154,8 +172,10 @@ public class ListenerService extends Service  {
                     String queryStmt = "SELECT name, birth, phoneno, teamno, hr, latitude, longitude, timestamp()\n"
                             + "FROM node, profile, gps";
 //                planKey = clientConnector.executeQuery(queryStmt);
-                    ClientConnector clientConnector = ListenerService.getServiceObject().getClientConnector();
-                    clientConnector.executeQuery(queryStmt);
+//                    ListenerService listernService = ListenerService.getServiceObject();
+//                    ClientConnector clientConnector = listernService.getClientConnector();
+                    PlanKey planKey = clientConnector.executeQuery(queryStmt);
+                    queryMap.put(planKey, "getUser");
                 }
                 catch (Exception e)
                 {

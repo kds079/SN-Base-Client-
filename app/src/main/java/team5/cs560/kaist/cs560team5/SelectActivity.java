@@ -1,6 +1,5 @@
 package team5.cs560.kaist.cs560team5;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import java.util.Arrays;
 import java.util.Date;
 
 import kr.ac.kaist.idb.snql.connector.ClientConnector;
-import kr.ac.kaist.idb.snql.planner.PlanKey;
 
 
 public class SelectActivity extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
@@ -45,30 +43,23 @@ public class SelectActivity extends ActionBarActivity implements View.OnClickLis
 
         proteges = new ArrayList<String>();
 
-        Intent intent = getIntent();
-        String name = intent.getStringExtra("name");
-        if(name != null){
-            proteges.add(name);
-        } else {
+//        Intent intent = getIntent();
+//        String name = intent.getStringExtra("name");
+//        if(name != null){
+//            proteges.add(name);
+//        } else {
             /*
             add query results heere
              */
             SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
-            String user = mPref.getString("user", "default");
-            proteges.add(user);
-//            proteges.add("LanaKim");
-//            proteges.add("Acky");
-//            proteges.add("HAHAH");
+            int userSize = mPref.getInt("userSize", 0);
 
-            String queryStmt = null;
-            PlanKey planKey = null;
-            System.out.println("==>>>  Query time : " + new Timestamp(new Date().getTime()));
-
-            queryStmt = "SELECT name, birth, phoneno, teamno, hr, latitude, longitude, timestamp()\n"
-                    + "FROM node, profile, gps";
+            for(int i=0; i<userSize; i++) {
+                proteges.add(mPref.getString("user"+i, "default"));
+            }
 //            new ProcessGetUser().execute(null, null, null);
+//        }
 
-        }
         checkboxes = new boolean[proteges.size()];
         Arrays.fill(checkboxes, false);
 
