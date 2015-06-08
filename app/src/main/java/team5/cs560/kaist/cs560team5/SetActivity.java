@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
@@ -18,6 +19,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.sql.Timestamp;
+import java.util.Date;
+
+import kr.ac.kaist.idb.snql.connector.ClientConnector;
+import kr.ac.kaist.idb.snql.planner.PlanKey;
 
 
 public class SetActivity extends ActionBarActivity implements View.OnClickListener{
@@ -147,6 +154,34 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
         MainActivity.isSetFlag = true;
         Log.d("jplee", "here3?");
 
+        new ProcessSetHrEvent().execute(null, null, null);
         finish();
+    }
+
+    private class ProcessSetHrEvent extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            try
+            {
+                ListenerService listenerService = ListenerService.getServiceObject();
+                ClientConnector clientConnector = listenerService.getClientConnector();
+
+                String queryStmt = "CREATE EVENT heart_rate_event_1\n"
+                        + "FROM node WHEN hr < 100";
+                PlanKey planKey = clientConnector.executeQuery(queryStmt);
+
+                queryStmt = "ON EVENT (heart_rate_event_1, 3s, 120s, REPEAT)\n"
+                        + "SELECT name, hr, latitude, longitude, timestamp() FROM node, profile, gps";
+//				+ "WHERE name='test kim'";
+                planKey = clientConnector.executeQuery(queryStmt);
+                listenerService.setQueryMap(planKey, "HrEvent");
+                Log.v("dskim", "==>>>  planKey : " + planKey + "Query time : " + new Timestamp(new Date().getTime()));
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 }
