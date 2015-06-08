@@ -79,7 +79,7 @@ public class ListenerService extends Service  {
         @Override
         public void onConnect() {
             PlanKey planKey = null;
-//            new ProcessGetUser().execute(null, null, null);
+            new ProcessGetUser().execute(null, null, null);
 //        String queryStmt = null;
 //        PlanKey planKey = null;
 //        Log.D("dskim", "==>>>  Query time : " + new Timestamp(new Date().getTime()));
