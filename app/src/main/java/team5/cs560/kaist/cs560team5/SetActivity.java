@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,7 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -37,12 +38,12 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
     private ImageView imageOutside;
     private Button applySetting;
     private int tcount;
-    private TextView mtView = null;
+    //private TextView mtView = null;
     private Bitmap bmap;
     private Canvas cvas;
-    private Paint paint;
+    private Paint paintR;
+    private Paint paintC;
 
-    private float downx =0,downy=0, upx=0, upy=0;
 
 
     @Override
@@ -55,17 +56,27 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
         dist = (EditText)findViewById(R.id.editDIST);
         la = new float[2];
         lo = new float[2];
-        imageInside = (ImageView) findViewById(R.id.mapimage1);
+        imageInside = (ImageView) findViewById(R.id.inside_imageview);
         imageOutside = (ImageView) findViewById(R.id.outside_imageview);
-        mtView = (TextView) findViewById(R.id.mtextView);
+        //mtView = (TextView) findViewById(R.id.mtextView);
         Display currentDisplay = getWindowManager().getDefaultDisplay();
-        float dw = currentDisplay.getWidth();
-        float dh = currentDisplay.getHeight();
+        Point size = new Point();
+        currentDisplay.getSize(size);
+        int dw = size.x;
+        int dh = size.y;
 
-        bmap = Bitmap.createBitmap((int) dw, (int) dh, Bitmap.Config.ARGB_8888);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) imageInside.getLayoutParams();
+        params.width = 720;
+        params.height = 720;
+        imageInside.setLayoutParams(params);
+
+        bmap = Bitmap.createBitmap((int) dw, (int) (dh*0.7), Bitmap.Config.ARGB_8888);
+        //bmap.eraseColor(Color.GRAY);
         cvas = new Canvas(bmap);
-        paint = new Paint();
-        paint.setColor(Color.RED);
+        paintR = new Paint();
+        paintR.setColor(Color.argb(130, 200, 200, 200));
+        paintC = new Paint();
+        paintC.setColor(Color.argb(200, 255, 0, 0));
         imageOutside.setImageBitmap(bmap);
         //mdView = (View)findViewById(R.id.mView1);
         //mtipView = (TipsView) findViewById(R.id.mTipsView);
@@ -85,12 +96,12 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
 
                                 float x = Ev.getX();
                                 float y = Ev.getY();
-                                mtView.setText("Coord: " + x + ", " + y + " tc: " + tcount);
+                                //mtView.setText("Coord: " + x + ", " + y + " tc: " + tcount);
                                 la[tcount] = x;
                                 lo[tcount] = y;
-                                cvas.drawCircle(x, y, 7, paint);
+                                cvas.drawCircle(x, y, 12, paintC);
                                 if (tcount == 1) {
-                                    cvas.drawRect(la[0],lo[0],la[1], lo[1],paint);
+                                    cvas.drawRect(la[0],lo[0],la[1], lo[1],paintR);
                                 }
                             }
                             tcount++;

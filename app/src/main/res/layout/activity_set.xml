@@ -65,7 +65,6 @@
                 android:id="@+id/editDIST"
                 android:layout_column="1" />
         </TableRow>
-
         <!--TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -157,27 +156,37 @@
                 android:id="@+id/editLo2"
                 android:layout_column="1" />
         </TableRow-->
-
-
     </TableLayout>
-
-    <ImageView
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/lout"
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/mapimage1"
-        android:id="@+id/mapimage1"
-        android:layout_below="@+id/tableLayout"
-        android:scaleType="fitXY" />
+        android:layout_below="@+id/tableLayout" >
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:src="@mipmap/mapimage1"
+            android:id="@+id/inside_imageview"
+            android:scaleType="fitXY" />
+
+        <!--TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/mtextView"/-->
+
+    </LinearLayout>
+
     <ImageView
         android:id="@+id/outside_imageview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/mapimage1"
-        android:scaleType="fitXY"/>
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/mtextView"/>
+        android:layout_below="@+id/tableLayout"
+        android:layout_alignTop="@id/inside_imageview"
+        android:scaleType="fitXY"
+        tools:ignore="NotSibling" />
 
 
     <Button
