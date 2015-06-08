@@ -1,10 +1,15 @@
 package team5.cs560.kaist.cs560team5;
 
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -21,12 +26,17 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
     private EditText dist;
     private float la[];
     private float lo[];
-    private ImageView im1;
+    private ImageView imageInside;
+    private ImageView imageOutside;
     private Button applySetting;
     private int tcount;
     private TextView mtView = null;
-   // private View mdView = null;
-    //private TipsView mtipView = null;
+    private Bitmap bmap;
+    private Canvas cvas;
+    private Paint paint;
+
+    private float downx =0,downy=0, upx=0, upy=0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,49 +48,50 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
         dist = (EditText)findViewById(R.id.editDIST);
         la = new float[2];
         lo = new float[2];
-     //   la1 = (EditText)findViewById(R.id.editLa1);
-     //   lo1 = (EditText)findViewById(R.id.editLo1);
-     //   la2 = (EditText)findViewById(R.id.editLa2);
-     //   lo2 = (EditText)findViewById(R.id.editLo2);
-        im1 = (ImageView) findViewById(R.id.mapimage1);
+        imageInside = (ImageView) findViewById(R.id.mapimage1);
+        imageOutside = (ImageView) findViewById(R.id.outside_imageview);
         mtView = (TextView) findViewById(R.id.mtextView);
+        Display currentDisplay = getWindowManager().getDefaultDisplay();
+        float dw = currentDisplay.getWidth();
+        float dh = currentDisplay.getHeight();
+
+        bmap = Bitmap.createBitmap((int) dw, (int) dh, Bitmap.Config.ARGB_8888);
+        cvas = new Canvas(bmap);
+        paint = new Paint();
+        paint.setColor(Color.RED);
+        imageOutside.setImageBitmap(bmap);
         //mdView = (View)findViewById(R.id.mView1);
         //mtipView = (TipsView) findViewById(R.id.mTipsView);
 
         //mtipView.setOnTouchListener();
 
-        im1.setOnTouchListener(new View.OnTouchListener(){
+        imageOutside.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent Ev) {
                 //mtipView.setOnTouchListener(this);
-                if (view == findViewById(R.id.mapimage1)) {
-
-                    switch(Ev.getAction()){
+                if (view == findViewById(R.id.outside_imageview)) {
+                    switch (Ev.getAction()) {
                         case MotionEvent.ACTION_DOWN:
-                        //case MotionEvent.ACTION_MOVE:
-                            if(tcount < 2) {
+                            //case MotionEvent.ACTION_MOVE:
+                            if (tcount < 2) {
 
                                 float x = Ev.getX();
                                 float y = Ev.getY();
                                 mtView.setText("Coord: " + x + ", " + y + " tc: " + tcount);
                                 la[tcount] = x;
                                 lo[tcount] = y;
-                                tcount++;
-
+                                cvas.drawCircle(x, y, 7, paint);
+                                if (tcount == 1) {
+                                    cvas.drawRect(la[0],lo[0],la[1], lo[1],paint);
+                                }
                             }
-
+                            tcount++;
                     }
-                    /*
-                    if(tcount < 2) {
-                        switch
-
-                        //Log.d("tag", "click" + x + ", " + y);
-                    }
-                    */
                 }
                 return true;
             }
+
         });
 
 
@@ -134,7 +145,7 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
             ;//not commit();
         }
         MainActivity.isSetFlag = true;
-        Log.d("tag", "here3?");
+        Log.d("jplee", "here3?");
 
         finish();
     }
