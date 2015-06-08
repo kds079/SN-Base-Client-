@@ -201,6 +201,8 @@ public class ListenerService extends Service  {
 //                queryMap.remove(planKey);
             } else if("DistEvent".equals(queryMap.get(planKey))) {  //Event query for hr, region
                 Log.d("dskim", "onReceiveResut : DistEvent");
+
+                //Check Distnace Event
                 double[] gps = getGps(table);
                 //gps[0] : latitude
                 //gps[1] : longitude
@@ -212,14 +214,52 @@ public class ListenerService extends Service  {
                         startDistNoti();
                     }
                 }
-//                startDistNoti();
+
+                //Check Hr Event
+                int hrResult = getHr(table);
+                if(hr > hrResult){
+                    startHeartNoti();
+                }
+
+                //Check Region Event
+                float highLa = 0, lowLa = 0;
+                float highLo = 0, lowLo = 0;
+                if(la1 > la2){
+                    highLa = la1;
+                    lowLa = la2;
+                } else{
+                    highLa = la2;
+                    lowLa = la1;
+                }
+                if(lo1 > lo2){
+                    highLo = lo1;
+                    lowLo = lo2;
+                } else{
+                    highLo = lo2;
+                    lowLo = lo1;
+                }
+                //gps[0] : latitude
+                //gps[1] : longitude
+                if(gps[0] < lowLa || gps[0] > highLa || gps[1] < lowLo || gps[1] > highLo){
+                    startEscapeNoti();
+                }
 
                 new ProcessDistQuery().execute(null, null, null);
             } else {                                                    //Select query for distance event
                 Log.d("dskim", "onReceiveResut : event");
-                ;
             }
             queryMap.remove(planKey);
+        }
+
+        private int getHr(ResultTable table){
+            int hr=0;
+            Object[] tuples = null;
+            table.reset();
+            while (table.hasNext()) {
+                tuples = table.getTuple();
+                hr = (Integer)tuples[3];
+            }
+            return hr;
         }
 
         private double[] getGps(ResultTable table){
@@ -232,9 +272,6 @@ public class ListenerService extends Service  {
 
                 gps[0] = (Double)tuples[1];
                 gps[1] = (Double)tuples[2];
-
-//                gps[0] = Float.parseFloat((String)tuples[1]);
-//                gps[1] = Float.parseFloat((String)tuples[2]);
             }
             return gps;
         }
@@ -354,10 +391,10 @@ public class ListenerService extends Service  {
                 {
                     SystemClock.sleep(3000);
                     Log.v("dskim", "==>>>  Query time : " + new Timestamp(new Date().getTime()));
-//                    String queryStmt = "SELECT name, birth, phoneno, teamno, hr, latitude, longitude, timestamp()\n"
-//                            + "FROM node, profile, gps";
-                    String queryStmt = "SELECT name, latitude, longitude, timestamp()\n"
-                            + "FROM profile, gps";
+                    String queryStmt = "SELECT name, latitude, longitude, hr, timestamp()\n"
+                            + "FROM profile, gps, node";
+//                    String queryStmt = "SELECT name, latitude, longitude, timestamp()\n"
+//                            + "FROM profile, gps";
                     PlanKey planKey = clientConnector.executeQuery(queryStmt);
                     queryMap.put(planKey, "DistEvent");
                 }

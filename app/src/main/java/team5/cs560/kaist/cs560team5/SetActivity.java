@@ -200,10 +200,15 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
 //                Log.v("dskim", "==>>>  planKey : " + planKey + "Query time : " + new Timestamp(new Date().getTime()));
 
                 //Select query for distance event
-                queryStmt = "SELECT name, latitude, longitude, timestamp()\n"
-				        + "FROM profile, gps";
-        		planKey = clientConnector.executeQuery(queryStmt);
+                queryStmt = "SELECT name, latitude, longitude, hr, timestamp()\n"
+                        + "FROM profile, gps, node";
+                planKey = clientConnector.executeQuery(queryStmt);
                 listenerService.setQueryMap(planKey, "DistEvent");
+
+//                queryStmt = "SELECT name, latitude, longitude, timestamp()\n"
+//				        + "FROM profile, gps";
+//        		planKey = clientConnector.executeQuery(queryStmt);
+//                listenerService.setQueryMap(planKey, "DistEvent");
                 Log.v("dskim", "==>>>  planKey : " + planKey + "Query time for distance event : " + new Timestamp(new Date().getTime()));
             }
             catch (Exception e)
