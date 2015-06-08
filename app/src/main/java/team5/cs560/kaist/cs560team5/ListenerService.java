@@ -73,7 +73,7 @@ public class ListenerService extends Service  {
             new ProcessGetUser().execute(null, null, null);
 //        String queryStmt = null;
 //        PlanKey planKey = null;
-//        System.out.println("==>>>  Query time : " + new Timestamp(new Date().getTime()));
+//        Log.D("dskim", "==>>>  Query time : " + new Timestamp(new Date().getTime()));
 ////		planKey = clientConnector.executeQuery("SHOW tables");
 ////		planKey = clientConnector.executeQuery("SHOW events");
 //
@@ -96,12 +96,12 @@ public class ListenerService extends Service  {
 
         @Override
         public void onDisconnect() {
-            System.out.println("Connection lost.");
+            Log.d("dskim", "Connection lost.");
         }
 
         @Override
         public void onReceiveClientPlan(PlanKey pKey1, PlanKey pKey2) {
-            System.out.println("======>>> " + pKey1 + " : " + pKey2);
+            Log.d("dskim", "======>>> " + pKey1 + " : " + pKey2);
         }
 
         @Override
@@ -113,20 +113,28 @@ public class ListenerService extends Service  {
 //            getApplicationContext().startActivity(intent);
 
             if( "getUser".equals(queryMap.get(planKey))) {
-                SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                SharedPreferences.Editor editor = mPref.edit();
-                ArrayList<String> users = getUser(table);
-                for(int i=0; i<users.size(); i++) {
-                    editor.putString("user"+i, users.get(i));
-                }
-                editor.putInt("userSize", users.size());
-                //Toast.makeText(this, a.toString(), Toast.LENGTH_SHORT).show();
-                editor.commit();
+                setUserList(table);
                 queryMap.remove(planKey);
             }
         }
 
-        ArrayList<String> getUser(ResultTable table){
+        private void setUserList(ResultTable table){
+            SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences.Editor editor = mPref.edit();
+            int userSize = mPref.getInt("userSize", 0);
+            for(int i=0; i<userSize; i++) {
+                editor.remove("user"+i);
+            }
+            ArrayList<String> users = getUser(table);
+            for(int i=0; i<users.size(); i++) {
+                editor.putString("user"+i, users.get(i));
+            }
+            editor.putInt("userSize", users.size());
+            //Toast.makeText(this, a.toString(), Toast.LENGTH_SHORT).show();
+            editor.commit();
+        }
+
+        private ArrayList<String> getUser(ResultTable table){
             ArrayList<String> users = new ArrayList<String>();
             Object[] tuples = null;
             table.reset();
@@ -138,7 +146,7 @@ public class ListenerService extends Service  {
             return users;
         }
 
-        void printResult(PlanKey planKey, ResultTable table){
+        private void printResult(PlanKey planKey, ResultTable table){
             Attribute[] attrs = table.getAttributes();
             Object[] tuples = null;
             StringBuffer sb = new StringBuffer();
@@ -146,7 +154,7 @@ public class ListenerService extends Service  {
             Log.d("dskim", "==>>>  Resp time : " + new Timestamp(new Date().getTime()));
             Log.d("dskim", "size : " + table.size());
 
-            for( Attribute attr : attrs){
+            for ( Attribute attr : attrs){
                 sb.append(attr.getName() + " | ");
             }
             Log.d("dskim", sb.toString());
@@ -154,7 +162,7 @@ public class ListenerService extends Service  {
 
             while (table.hasNext()) {
                 tuples = table.getTuple();
-                for( Object tuple : tuples){
+                for (Object tuple : tuples){
                     sb.append(tuple + " | ");
                 }
                 Log.d("dskim", sb.toString());
