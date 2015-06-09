@@ -9,6 +9,7 @@
     <facet type="java-gradle" name="Java-Gradle">
       <configuration>
         <option name="BUILD_FOLDER_PATH" value="$MODULE_DIR$/build" />
+        <option name="BUILDABLE" value="true" />
       </configuration>
     </facet>
   </component>
@@ -26,7 +27,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="C__Users_jsim_AndroidStudioProjects_SN_Base_Client__lib_SNQL_Connector_Library_jar" level="project" />
+    <orderEntry type="library" exported="" name="_Users_lanakim_AndroidProjects_SN_Base_Client__lib_SNQL_Connector_Library_jar" level="project" />
   </component>
 </module>
-
