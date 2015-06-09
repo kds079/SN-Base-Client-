@@ -6,13 +6,23 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="team5.cs560.kaist.cs560team5.MonitorActivity">
 
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Name"
+        android:id="@+id/monitorName"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
+
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:stretchColumns="0,1,2,3"
-        android:id="@+id/monitorTable">
+        android:id="@+id/monitorTable"
+        android:layout_below="@+id/monitorName">
 
         <TableRow
             android:layout_width="match_parent"
@@ -21,8 +31,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Name"
-                android:id="@+id/monitorName"
+                android:text="HR"
+                android:id="@+id/monitorHR"
                 android:layout_column="0"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true"
@@ -31,26 +41,206 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="hr"
-                android:id="@+id/monitorHr"
+                android:text="La"
+                android:id="@+id/monitorLa"
                 android:layout_column="1" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="latitude"
-                android:id="@+id/monitorLatitude"
+                android:text="Lo"
+                android:id="@+id/monitorLo"
                 android:layout_column="2" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="longitude"
-                android:id="@+id/monitorLongitude"
+                android:text="Distance"
+                android:id="@+id/monitorDist"
+                android:layout_column="3" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorHR0"
+                android:layout_column="0"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="top" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorLa0"
+                android:layout_column="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorLo0"
+                android:layout_column="2" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorDist0"
+                android:layout_column="3" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorHR1"
+                android:layout_column="0"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="top" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorLa1"
+                android:layout_column="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorLo1"
+                android:layout_column="2" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorDist1"
+                android:layout_column="3" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorHR2"
+                android:layout_column="0"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="top" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorLa2"
+                android:layout_column="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorLo2"
+                android:layout_column="2" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorDist2"
+                android:layout_column="3" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorHR3"
+                android:layout_column="0"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="top" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorLa3"
+                android:layout_column="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorLo3"
+                android:layout_column="2" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorDist3"
+                android:layout_column="3" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorHR4"
+                android:layout_column="0"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="top" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorLa4"
+                android:layout_column="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorLo4"
+                android:layout_column="2" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/monitorDist4"
                 android:layout_column="3" />
         </TableRow>
 
 
     </TableLayout>
+
+
 
 </RelativeLayout>

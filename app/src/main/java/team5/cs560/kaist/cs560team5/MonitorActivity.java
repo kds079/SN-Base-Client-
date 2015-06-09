@@ -11,8 +11,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
 
 
 public class MonitorActivity extends ActionBarActivity {
@@ -22,81 +21,40 @@ public class MonitorActivity extends ActionBarActivity {
     private TextView[] hrList;
 
 
+    private TableThread tThread;
+    private SharedPreferences mPref;
+    private TextView monitorName;
+    private TextView[][] rcs;
+    private Long[] hrs;
+    private Float[] las;
+    private Float[] los;
+    private Float[] dis;
+
+
+    private android.os.Handler tHandler = new android.os.Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor);
 
+        monitorName = (TextView)findViewById(R.id.monitorName);
         monitorTable = (TableLayout)findViewById(R.id.monitorTable);
-        if(monitorTable == null)
-            Log.v("Lanakim", "table layout not found");
-
-        // Preference file
-        SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
-        int pn = mPref.getInt("protegeno", 0);
-        //Toast.makeText(this, json_str, Toast.LENGTH_SHORT).show();
-        try {
-            String a = "";
-            List<String> proteges_list = new ArrayList<String>();
-            int i;
-            for(i = 1; i <= pn; ++i)
-            {
-                proteges_list.add(mPref.getString("protege"+i, null));
-                a += mPref.getString("protege"+i, null);
-            }
-            //Toast.makeText(this, a, Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        Log.v("Lanakim", "1");
-        //For Test
-        pn = 3;
-
-        rowList = new TableRow[pn];
-        nameList = new TextView[pn];
-        hrList = new TextView[pn];
-
-        int i = 0;
-
-
-
-        Log.v("Lanakim", "1.1");
-
-
-        for(i = 0; i < pn; ++i)
-        {
-            nameList[i] = new TextView(this);
-            nameList[i].setText("Name");
-            //nameList[i].setId(1000 + i);
-            //nameList[i].setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT));
-            hrList[i] = new TextView(this);
-            hrList[i].setText("99.99");
-            //hrList[i].setId(2000 + i);
-            //hrList[i].setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT));
-        }
-
-
-
-        Log.v("Lanakim", "2");
-
-
-        for(i = 0; i < pn; ++i)
-        {
-            rowList[i] = new TableRow(this);
-            Log.v("Lanakim", "2.1");
-            rowList[i].addView(nameList[i]);
-            Log.v("Lanakim", "2.2");
-            rowList[i].addView(hrList[i]);
-            Log.v("Lanakim", "2.3");
-            monitorTable.addView(rowList[i]);
-            Log.v("Lanakim", "2.4");
-        }
-
-        Log.v("Lanakim", "3");
-
-
+        mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        rcs = new TextView[5][4];
+        rcs[0][0] = (TextView)findViewById(R.id.monitorHR0); rcs[0][1] = (TextView)findViewById(R.id.monitorLa0); rcs[0][2] = (TextView)findViewById(R.id.monitorLo0); rcs[0][3] = (TextView)findViewById(R.id.monitorDist0);
+        rcs[1][0] = (TextView)findViewById(R.id.monitorHR1); rcs[1][1] = (TextView)findViewById(R.id.monitorLa1); rcs[1][2] = (TextView)findViewById(R.id.monitorLo1); rcs[1][3] = (TextView)findViewById(R.id.monitorDist1);
+        rcs[2][0] = (TextView)findViewById(R.id.monitorHR2); rcs[2][1] = (TextView)findViewById(R.id.monitorLa2); rcs[2][2] = (TextView)findViewById(R.id.monitorLo2); rcs[2][3] = (TextView)findViewById(R.id.monitorDist2);
+        rcs[3][0] = (TextView)findViewById(R.id.monitorHR3); rcs[3][1] = (TextView)findViewById(R.id.monitorLa3); rcs[3][2] = (TextView)findViewById(R.id.monitorLo3); rcs[3][3] = (TextView)findViewById(R.id.monitorDist3);
+        rcs[4][0] = (TextView)findViewById(R.id.monitorHR4); rcs[4][1] = (TextView)findViewById(R.id.monitorLa4); rcs[4][2] = (TextView)findViewById(R.id.monitorLo4); rcs[4][3] = (TextView)findViewById(R.id.monitorDist4);
+        hrs = new Long[5];
+        las = new Float[5];
+        los = new Float[5];
+        dis = new Float[5];
 
 
 
@@ -114,11 +72,87 @@ public class MonitorActivity extends ActionBarActivity {
         //mtView.setText("hr: "+hr+", dist: "+dist+"\n la1"+la1+" lo1 "+lo1+" la2 "+la2+" lo2 "+lo2);
         ////
 
-        
+        int i,j;
+        for(i = 0; i < 5; ++i)
+        {
+            for(j = 0; j < 4; ++j)
+            {
+                rcs[i][j].setText(""+i+j);
+            }
+        }
+
+
+        tThread = new TableThread();
+        tThread.start();
 
 
 
+    }
 
+
+    class TableThread extends Thread
+    {
+        int i;
+        private int cycle = 2000;
+        private boolean isRunning = true;
+        @Override
+        public void run()
+        {
+            super.run();
+            Random rand = new Random();
+            while (isRunning)
+            {
+                for(i = 3; i >= 0; --i)
+                {
+                    hrs[i+1] = hrs[i]; las[i+1] = las[i]; los[i+1] = los[i]; dis[i+1] = dis[i];
+                }
+                hrs[0] = mPref.getLong("monHr", 0); las[0] = mPref.getFloat("monLa", 0); las[0] = mPref.getFloat("monLo", 0);
+                //dis[0] =
+
+                // random for test
+                hrs[0] = rand.nextLong() % 150;
+                las[0] = rand.nextFloat();
+                los[0] = rand.nextFloat();
+                dis[0] = rand.nextFloat();
+                //Log.v("lanakim", "Getting data from preference");
+                //Log.v("lanakim", hrs[0].toString() + " " + las[0].toString() + " " + los[0].toString() + " " + dis[0].toString());
+                tHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Log.v("lanakim", "Enter run()");
+                        //Log.v("lanakim", "Changing name");
+                        monitorName.setText(mPref.getString("monName", "LanaKim"));
+                        int ii;
+
+                        //Log.v("lanakim", "Changing values");
+                        try {
+                            for (ii = 0; ii < 5; ++ii) {
+                                //Log.v("lanakim", "hrs update : " + hrs[ii].toString());
+                                rcs[ii][0].setText(String.format("%d", hrs[ii]));
+                                //Log.v("lanakim", "las update : " + las[ii].toString());
+                                rcs[ii][1].setText(String.format("%.2f", las[ii]));
+                                //Log.v("lanakim", "los update : " + los[ii].toString());
+                                rcs[ii][2].setText(String.format("%.2f", los[ii]));
+                                //Log.v("lanakim", "dis update : " + dis[ii].toString());
+                                rcs[ii][3].setText(String.format("%.2f", dis[ii]));
+
+                            }
+                        } catch(Exception e){
+                            Log.v("lanakim", e.getMessage().toString());
+                            Log.v("lanakim", "ERROR!!!");
+                        }
+
+                    }
+                });
+
+
+                try {
+                    sleep(cycle, 0);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
@@ -141,5 +175,12 @@ public class MonitorActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public void onDestory()
+    {
+        tThread.interrupt();
+        super.onDestroy();
     }
 }
