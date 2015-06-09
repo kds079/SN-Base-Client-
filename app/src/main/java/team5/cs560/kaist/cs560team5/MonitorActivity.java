@@ -28,7 +28,7 @@ public class MonitorActivity extends ActionBarActivity {
     private Long[] hrs;
     private Float[] las;
     private Float[] los;
-    private Float[] dis;
+    private double[] dis;
 
 
     private android.os.Handler tHandler = new android.os.Handler();
@@ -54,7 +54,7 @@ public class MonitorActivity extends ActionBarActivity {
         hrs = new Long[5];
         las = new Float[5];
         los = new Float[5];
-        dis = new Float[5];
+        dis = new double[5];
 
 
 
@@ -93,7 +93,7 @@ public class MonitorActivity extends ActionBarActivity {
     class TableThread extends Thread
     {
         int i;
-        private int cycle = 2000;
+        private int cycle = 4000;
         private boolean isRunning = true;
         @Override
         public void run()
@@ -106,14 +106,14 @@ public class MonitorActivity extends ActionBarActivity {
                 {
                     hrs[i+1] = hrs[i]; las[i+1] = las[i]; los[i+1] = los[i]; dis[i+1] = dis[i];
                 }
-                hrs[0] = mPref.getLong("monHr", 0); las[0] = mPref.getFloat("monLa", 0); las[0] = mPref.getFloat("monLo", 0);
-                //dis[0] =
+                hrs[0] = mPref.getLong("monHr", 0); las[0] = mPref.getFloat("monLa", 0); los[0] = mPref.getFloat("monLo", 0);
+                dis[0] = ListenerService.getServiceObject().getDistance();
 
                 // random for test
-                hrs[0] = rand.nextLong() % 150;
-                las[0] = rand.nextFloat();
-                los[0] = rand.nextFloat();
-                dis[0] = rand.nextFloat();
+//                hrs[0] = rand.nextLong() % 150;
+//                las[0] = rand.nextFloat();
+//                los[0] = rand.nextFloat();
+//                dis[0] = rand.nextFloat();
                 //Log.v("lanakim", "Getting data from preference");
                 //Log.v("lanakim", hrs[0].toString() + " " + las[0].toString() + " " + los[0].toString() + " " + dis[0].toString());
                 tHandler.post(new Runnable() {

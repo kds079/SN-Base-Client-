@@ -86,6 +86,15 @@ public class ListenerService extends Service  {
         Log.d("tag", "Location Service Start");
         self = this;
     }
+
+    public double getDistance(){
+        if (gpsFlag) {
+            return distance;
+        } else {
+            return -1;
+        }
+    }
+
     // author: jaeseong
     // for protector location
     LocationListener mLocListener = new LocationListener() {
@@ -412,7 +421,7 @@ public class ListenerService extends Service  {
             protected Void doInBackground(Void... params) {
                 try
                 {
-                    SystemClock.sleep(3000);
+                    SystemClock.sleep(1000);
                     Log.v("dskim", "==>>>  Query time : " + new Timestamp(new Date().getTime()));
 
                     SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
