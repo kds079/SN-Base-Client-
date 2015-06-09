@@ -1,5 +1,6 @@
 package team5.cs560.kaist.cs560team5;
 
+import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -7,6 +8,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,14 +18,23 @@ import java.util.List;
 
 
 public class MonitorActivity extends ActionBarActivity {
-    private TextView mtView = null;
+    private TableLayout monitorTable;
+    private TableRow[] rowList;
+    private TextView[] nameList;
+    private TextView[] hrList;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        mtView = (TextView) findViewById(R.id.mtextView2);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor);
+
+
+
+        monitorTable = (TableLayout)findViewById(R.id.monitorTable);
+        if(monitorTable == null)
+            Log.v("Lanakim", "table layout not found");
 
         // Preference file
         SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -40,6 +53,56 @@ public class MonitorActivity extends ActionBarActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        Log.v("Lanakim", "1");
+        //For Test
+        pn = 3;
+
+        rowList = new TableRow[pn];
+        nameList = new TextView[pn];
+        hrList = new TextView[pn];
+
+        int i = 0;
+
+
+
+        Log.v("Lanakim", "1.1");
+
+
+        for(i = 0; i < pn; ++i)
+        {
+            nameList[i] = new TextView(this);
+            nameList[i].setText("Name");
+            //nameList[i].setId(1000 + i);
+            //nameList[i].setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT));
+            hrList[i] = new TextView(this);
+            hrList[i].setText("99.99");
+            //hrList[i].setId(2000 + i);
+            //hrList[i].setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT));
+        }
+
+
+
+        Log.v("Lanakim", "2");
+
+
+        for(i = 0; i < pn; ++i)
+        {
+            rowList[i] = new TableRow(this);
+            Log.v("Lanakim", "2.1");
+            rowList[i].addView(nameList[i]);
+            Log.v("Lanakim", "2.2");
+            rowList[i].addView(hrList[i]);
+            Log.v("Lanakim", "2.3");
+            monitorTable.addView(rowList[i]);
+            Log.v("Lanakim", "2.4");
+        }
+
+        Log.v("Lanakim", "3");
+
+
+
+
 
         //
         Float hr = mPref.getFloat("hr", 0);
