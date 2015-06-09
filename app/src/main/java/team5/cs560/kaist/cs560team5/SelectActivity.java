@@ -106,16 +106,21 @@ public class SelectActivity extends ActionBarActivity implements View.OnClickLis
     public void onClick(View v)
     {
         SparseBooleanArray positions = selectListView.getCheckedItemPositions();
+        //SparseBooleanArray positions = selectListView.getCheckedItemPositions();
         SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = mPref.edit();
-        int size=positions.size();
+        int size=selectListView.getCount();
+        Log.d("select", "SIZE: " + selectListView.getCount());
+
         int i=0;
         int n = 0;
         String a = "";
         for(i = 0; i <= size; ++i){
             if(positions.get(i))
             {
+                Log.d("select", "SIZE: " + size);
                 editor.putString("protege"+n, selectListView.getItemAtPosition(i).toString());
+                Log.d("select", "fd: "+selectListView.getItemAtPosition(i).toString());
                 a += selectListView.getItemAtPosition(i).toString();
                 n++;
             }

@@ -65,10 +65,10 @@ public class MonitorActivity extends ActionBarActivity {
         Float lo1 = mPref.getFloat("lo1", 0);
         Float la2 = mPref.getFloat("la2", 0);
         Float lo2 = mPref.getFloat("lo2", 0);
-        Log.d("tags","DIST: "+dist);
-        Log.d("tags","HR: "+hr);
-        Log.d("tags","La/Lo1: "+la1+","+lo1);
-        Log.d("tags", "La/lo2: " + la2 + "," + lo2);
+        Log.d("tas","DIST: "+dist);
+        Log.d("tas","HR: "+hr);
+        Log.d("tas","La/Lo1: "+la1+","+lo1);
+        Log.d("tas", "La/lo2: " + la2 + "," + lo2);
         //mtView.setText("hr: "+hr+", dist: "+dist+"\n la1"+la1+" lo1 "+lo1+" la2 "+la2+" lo2 "+lo2);
         ////
 

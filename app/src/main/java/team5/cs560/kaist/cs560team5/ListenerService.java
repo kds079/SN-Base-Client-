@@ -104,6 +104,7 @@ public class ListenerService extends Service  {
         public void onLocationChanged(Location location) {
             protectorLocationLat = location.getLatitude();
             protectorLocationLon = location.getLongitude();
+            Log.d("tag",protectorLocationLat+","+protectorLocationLon);
             gpsFlag = true;
         }
 
@@ -220,6 +221,7 @@ public class ListenerService extends Service  {
                 //gps[1] : longitude
                 //if distance condition
                 if (gpsFlag) {
+
                     distance = Math.sqrt( Math.pow((protectorLocationLat - gps[0]) * 1800, 2) + Math.pow((protectorLocationLon - gps[1]) * 1500, 2) );
                     Log.w("dskim", "Check Dist Event >> resultDist : " + distance  + " - setDist : " + dist);
                     // activate when distance_threshold is defined
