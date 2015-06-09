@@ -269,7 +269,7 @@ public class ListenerService extends Service  {
                 editor.putString("monName", (String) tuples[0]);
                 editor.putFloat("monLa", ((Double)tuples[1]).floatValue());
                 editor.putFloat("monLo", ((Double)tuples[2]).floatValue());
-                editor.putLong("monHr", (Long) tuples[3]);
+                editor.putLong("monHr", (Integer) tuples[3]);
             }
             editor.commit();
         }
@@ -280,7 +280,7 @@ public class ListenerService extends Service  {
             table.reset();
             while (table.hasNext()) {
                 tuples = table.getTuple();
-                hr = (Long)tuples[3];
+                hr = (Integer)tuples[3];
             }
             return hr;
         }
@@ -416,10 +416,10 @@ public class ListenerService extends Service  {
                     Log.v("dskim", "==>>>  Query time : " + new Timestamp(new Date().getTime()));
 
                     SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    int userSize = mPref.getInt("userSize", 0);
+                    int userSize = mPref.getInt("protegeno", 0);
                     StringBuffer userCondition = new StringBuffer();
                     for(int i=0; i<userSize ; i++) {
-                        userCondition.append("name = '").append(mPref.getString("user" + i, "default")).append("' ");
+                        userCondition.append("name = '").append(mPref.getString("protege" + i, "default")).append("' ");
                         if (i != (userSize - 1)) {
                             userCondition.append("or ");
                         }

@@ -199,10 +199,10 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
                 Float la2 = mPref.getFloat("la2", 0);
                 Float lo2 = mPref.getFloat("lo2", 0);
 
-                int userSize = mPref.getInt("userSize", 0);
+                int userSize = mPref.getInt("protegeno", 0);
                 StringBuffer userCondition = new StringBuffer();
                 for(int i=0; i<userSize ; i++) {
-                    userCondition.append("name = '").append(mPref.getString("user" + i, "default")).append("' ");
+                    userCondition.append("name = '").append(mPref.getString("protege" + i, "default")).append("' ");
                     if (i != (userSize - 1)) {
                         userCondition.append("or ");
                     }
