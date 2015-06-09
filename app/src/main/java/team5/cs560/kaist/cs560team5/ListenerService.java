@@ -43,6 +43,8 @@ public class ListenerService extends Service  {
     private LocationManager mLocMgr;
     private double protectorLocationLat;
     private double protectorLocationLon;
+    private boolean gpsFlag = false;
+    private double distance;
 
 
     public ListenerService(){
@@ -90,6 +92,7 @@ public class ListenerService extends Service  {
         public void onLocationChanged(Location location) {
             protectorLocationLat = location.getLatitude();
             protectorLocationLon = location.getLongitude();
+            gpsFlag = true;
         }
 
         public void onProviderDisabled(String provider) {
@@ -143,7 +146,7 @@ public class ListenerService extends Service  {
         @Override
         public void onConnect() {
             PlanKey planKey = null;
-//            new ProcessGetUser().execute(null, null, null);
+            new ProcessGetUser().execute(null, null, null);
 //        String queryStmt = null;
 //        PlanKey planKey = null;
 //        Log.D("dskim", "==>>>  Query time : " + new Timestamp(new Date().getTime()));
@@ -184,6 +187,13 @@ public class ListenerService extends Service  {
 //            intent.putExtra("name", "dskim");
 //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            getApplicationContext().startActivity(intent);
+            SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            Float hr = mPref.getFloat("hr", 0);
+            Float dist = mPref.getFloat("dist", 0);
+            Float la1 = mPref.getFloat("la1", 0);
+            Float lo1 = mPref.getFloat("lo1", 0);
+            Float la2 = mPref.getFloat("la2", 0);
+            Float lo2 = mPref.getFloat("lo2", 0);
 
             if( "getUser".equals(queryMap.get(planKey))) {          //for Select Activity
                 Log.d("dskim", "onReceiveResut : getUser");
@@ -191,18 +201,65 @@ public class ListenerService extends Service  {
 //                queryMap.remove(planKey);
             } else if("DistEvent".equals(queryMap.get(planKey))) {  //Event query for hr, region
                 Log.d("dskim", "onReceiveResut : DistEvent");
+
+                //Check Distnace Event
                 double[] gps = getGps(table);
                 //gps[0] : latitude
                 //gps[1] : longitude
                 //if distance condition
-//                startDistNoti();
+                if (gpsFlag) {
+                    distance = Math.sqrt( Math.pow((protectorLocationLat - gps[0]), 2) + Math.pow((protectorLocationLon - gps[1]), 2) );
+                    // activate when distance_threshold is defined
+                    if (distance > dist) {
+                        startDistNoti();
+                    }
+                }
+
+                //Check Hr Event
+                int hrResult = getHr(table);
+                if(hr > hrResult){
+                    startHeartNoti();
+                }
+
+                //Check Region Event
+                float highLa = 0, lowLa = 0;
+                float highLo = 0, lowLo = 0;
+                if(la1 > la2){
+                    highLa = la1;
+                    lowLa = la2;
+                } else{
+                    highLa = la2;
+                    lowLa = la1;
+                }
+                if(lo1 > lo2){
+                    highLo = lo1;
+                    lowLo = lo2;
+                } else{
+                    highLo = lo2;
+                    lowLo = lo1;
+                }
+                //gps[0] : latitude
+                //gps[1] : longitude
+                if(gps[0] < lowLa || gps[0] > highLa || gps[1] < lowLo || gps[1] > highLo){
+                    startEscapeNoti();
+                }
 
                 new ProcessDistQuery().execute(null, null, null);
             } else {                                                    //Select query for distance event
                 Log.d("dskim", "onReceiveResut : event");
-                ;
             }
             queryMap.remove(planKey);
+        }
+
+        private int getHr(ResultTable table){
+            int hr=0;
+            Object[] tuples = null;
+            table.reset();
+            while (table.hasNext()) {
+                tuples = table.getTuple();
+                hr = (Integer)tuples[3];
+            }
+            return hr;
         }
 
         private double[] getGps(ResultTable table){
@@ -215,22 +272,41 @@ public class ListenerService extends Service  {
 
                 gps[0] = (Double)tuples[1];
                 gps[1] = (Double)tuples[2];
-
-//                gps[0] = Float.parseFloat((String)tuples[1]);
-//                gps[1] = Float.parseFloat((String)tuples[2]);
             }
             return gps;
         }
 
         private void startDistNoti(){
             NotificationManager nm2 = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);   // call notification manager
-            Notification notification2 = new Notification(R.mipmap.distance, "Warnning! far from you!", System.currentTimeMillis());   // icon, tickerText, when
+            Notification notification2 = new Notification(R.mipmap.distance, "Warning! far from you!", System.currentTimeMillis());   // icon, tickerText, when
             notification2.flags = Notification.FLAG_AUTO_CANCEL;
             notification2.defaults = Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
             notification2.number = 13;
             PendingIntent pendingIntent2 = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), MonitorActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
             notification2.setLatestEventInfo(getApplicationContext(), "Far from you!", "Your child too far from you!!", pendingIntent2);   // context, contentTitle, contentText, contentIntent
             nm2.notify(1236, notification2);  // id, notification object
+        }
+
+        private void startHeartNoti() {
+            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);   // call notification manager
+            Notification notification = new Notification(R.mipmap.heart_attack, "Warning! Heart Attack!", System.currentTimeMillis());   // icon, tickerText, when
+            notification.flags = Notification.FLAG_AUTO_CANCEL;
+            notification.defaults = Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+            notification.number = 13;
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), MonitorActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+            notification.setLatestEventInfo(getApplicationContext(), "Heart Attack!", "Heart attack is happend!!", pendingIntent);   // context, contentTitle, contentText, contentIntent
+            nm.notify(1234, notification);  // id, notification object
+        }
+
+        private void startEscapeNoti() {
+            NotificationManager nm1 = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);   // call notification manager
+            Notification notification1 = new Notification(R.mipmap.escape, "Warning! Escape!", System.currentTimeMillis());   // icon, tickerText, when
+            notification1.flags = Notification.FLAG_AUTO_CANCEL;
+            notification1.defaults = Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+            notification1.number = 13;
+            PendingIntent pendingIntent1 = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), MonitorActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+            notification1.setLatestEventInfo(getApplicationContext(), "Escape!", "Your child escape from range!!", pendingIntent1);   // context, contentTitle, contentText, contentIntent
+            nm1.notify(1235, notification1);  // id, notification object
         }
 
         private void setUserList(ResultTable table){
@@ -315,10 +391,10 @@ public class ListenerService extends Service  {
                 {
                     SystemClock.sleep(3000);
                     Log.v("dskim", "==>>>  Query time : " + new Timestamp(new Date().getTime()));
-//                    String queryStmt = "SELECT name, birth, phoneno, teamno, hr, latitude, longitude, timestamp()\n"
-//                            + "FROM node, profile, gps";
-                    String queryStmt = "SELECT name, latitude, longitude, timestamp()\n"
-                            + "FROM profile, gps";
+                    String queryStmt = "SELECT name, latitude, longitude, hr, timestamp()\n"
+                            + "FROM profile, gps, node";
+//                    String queryStmt = "SELECT name, latitude, longitude, timestamp()\n"
+//                            + "FROM profile, gps";
                     PlanKey planKey = clientConnector.executeQuery(queryStmt);
                     queryMap.put(planKey, "DistEvent");
                 }
