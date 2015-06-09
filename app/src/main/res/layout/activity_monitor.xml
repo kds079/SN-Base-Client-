@@ -31,22 +31,22 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Att0"
-                android:id="@+id/monitorAtt0"
+                android:text="hr"
+                android:id="@+id/monitorHr"
                 android:layout_column="1" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Att1"
-                android:id="@+id/monitorAtt1"
+                android:text="latitude"
+                android:id="@+id/monitorLatitude"
                 android:layout_column="2" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Att2"
-                android:id="@+id/monitorAtt2"
+                android:text="Longitude"
+                android:id="@+id/monitorLongitude"
                 android:layout_column="3" />
         </TableRow>
 

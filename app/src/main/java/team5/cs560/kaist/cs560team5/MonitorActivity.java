@@ -1,6 +1,5 @@
 package team5.cs560.kaist.cs560team5;
 
-import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -8,7 +7,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -27,13 +25,12 @@ public class MonitorActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_monitor);
+
         monitorTable = (TableLayout)findViewById(R.id.monitorTable);
         if(monitorTable == null)
             Log.v("Lanakim", "table layout not found");
-
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_monitor);
 
         // Preference file
         SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
