@@ -68,7 +68,7 @@ public class MonitorActivity extends ActionBarActivity {
         Log.d("tags","DIST: "+dist);
         Log.d("tags","HR: "+hr);
         Log.d("tags","La/Lo1: "+la1+","+lo1);
-        Log.d("tags","La/lo2: "+la2+","+lo2);
+        Log.d("tags", "La/lo2: " + la2 + "," + lo2);
         //mtView.setText("hr: "+hr+", dist: "+dist+"\n la1"+la1+" lo1 "+lo1+" la2 "+la2+" lo2 "+lo2);
         ////
 
@@ -77,7 +77,8 @@ public class MonitorActivity extends ActionBarActivity {
         {
             for(j = 0; j < 4; ++j)
             {
-                rcs[i][j].setText(""+i+j);
+//                rcs[i][j].setText(""+i+j);
+                rcs[i][j].setText("");
             }
         }
 
@@ -128,13 +129,13 @@ public class MonitorActivity extends ActionBarActivity {
                         try {
                             for (ii = 0; ii < 5; ++ii) {
                                 //Log.v("lanakim", "hrs update : " + hrs[ii].toString());
-                                rcs[ii][0].setText(String.format("%d", hrs[ii]));
+                                rcs[ii][0].setText(String.format("%d", hrs[ii]!=null?hrs[ii]:""));
                                 //Log.v("lanakim", "las update : " + las[ii].toString());
-                                rcs[ii][1].setText(String.format("%.2f", las[ii]));
+                                rcs[ii][1].setText(String.format("%.2f", las[ii]!=null?las[ii]:""));
                                 //Log.v("lanakim", "los update : " + los[ii].toString());
-                                rcs[ii][2].setText(String.format("%.2f", los[ii]));
+                                rcs[ii][2].setText(String.format("%.2f", los[ii]!=null?los[ii]:""));
                                 //Log.v("lanakim", "dis update : " + dis[ii].toString());
-                                rcs[ii][3].setText(String.format("%.2f", dis[ii]));
+                                rcs[ii][3].setText(String.format("%.2f", dis[ii]!=0?dis[ii]:""));
 
                             }
                         } catch(Exception e){
