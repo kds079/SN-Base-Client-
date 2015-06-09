@@ -193,7 +193,7 @@ public class ListenerService extends Service  {
             Log.d("dskim", "======>>> " + pKey1 + " : " + pKey2);
         }
 
-        public float calDistance(float lat1, float lng1, float lat2, float lng2) {
+        public float calDistance(float lat1, float lat2, float lng1, float lng2) {
             double earthRadius = 6371000; //meters
             double dLat = Math.toRadians(lat2-lat1);
             double dLng = Math.toRadians(lng2-lng1);
@@ -262,6 +262,7 @@ public class ListenerService extends Service  {
                 if (gpsFlag) {
                     distance = calDistance((float)protectorLocationLat, (float)gps[0], (float)protectorLocationLon, (float)gps[1]);
                     //distance = Math.sqrt( Math.pow((protectorLocationLat - gps[0]) * 1800, 2) + Math.pow((protectorLocationLon - gps[1]) * 1500, 2) );
+                    Log.w("dskim", "protectorLocationLat : " + protectorLocationLat + " , gps[0] : " + gps[0] + ", protectorLocationLon : " + protectorLocationLon + ", gps[1] : " + gps[1]);
                     Log.w("dskim", "Check Dist Event >> resultDist : " + distance  + " - setDist : " + dist);
                     // activate when distance_threshold is defined
                     if (distance > dist && distanceFlag == true) {
