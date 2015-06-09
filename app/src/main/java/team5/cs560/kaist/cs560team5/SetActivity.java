@@ -54,10 +54,15 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set);
         tcount = 0;
+        //init
+        //hr = dist = Null;
+
         hr = (EditText)findViewById(R.id.editHR);
         dist = (EditText)findViewById(R.id.editDIST);
         la = new float[2];
         lo = new float[2];
+        la[0] = lo[0] = la[1] = lo[0] = (float)-1;
+
         imageInside = (ImageView) findViewById(R.id.inside_imageview);
         imageOutside = (ImageView) findViewById(R.id.outside_imageview);
         //mtView = (TextView) findViewById(R.id.mtextView);
@@ -116,6 +121,9 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
 
 
         applySetting = (Button)findViewById(R.id.settingApply);
+        Log.d("jplee","HR: "+hr.getText().toString());
+        Log.d("jplee","DIST: "+dist.getText().toString());
+        Log.d("jplee", "before scale:" + lo[0] + "," + la[0] + "//" + lo[1] + "," + la[1]);
         applySetting.setOnClickListener(this);
 
 
@@ -147,11 +155,13 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
     public void onClick(View v) {
         SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = mPref.edit();
-
+        boolean isDone = false;
         try {
+            Log.d("jplee", "Enter");
             editor.putFloat("hr", Float.parseFloat(hr.getText().toString()));
+            Log.d("jplee", "done_hr");
             editor.putFloat("dist", Float.parseFloat(dist.getText().toString()));
-
+            Log.d("jplee", "done_dist");
             //left top 36.374515, 127.355249  //right bottom 36.362947, 127.370162
             double upper_la = 36.374515;
             double lower_la = 36.362947;
@@ -159,31 +169,36 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
             double lower_lo = 127.355249;
             double realW = upper_lo - lower_lo;
             double realH = upper_la - lower_la;
-            Log.d("jplee","before scale:" + lo[0]+","+la[0]+"//"+lo[1]+","+la[1]);
-            lo[0] =(float) upper_lo - (float)(realW * ( ((double)dw - (double)lo[0]) /(double)dw ));
-            lo[1] =(float) upper_lo - (float)(realW * ( ((double)dw - (double)lo[1]) /(double)dw ));
-            la[0] =(float) lower_la + (float)(realH * ( ((double)dh - (double)la[0]) /(double)dh ));
-            la[1] =(float) lower_la + (float)(realH * ( ((double)dh - (double)la[1]) /(double)dh ));
 
-            Log.d("jplee","after scale:" + la[0]+","+lo[0]+"//"+la[1]+","+lo[1]);
+            Log.d("jplee", "before scale:" + lo[0] + "," + la[0] + "//" + lo[1] + "," + la[1]);
+            lo[0] = (float) upper_lo - (float) (realW * (((double) dw - (double) lo[0]) / (double) dw));
             editor.putFloat("lo1", lo[0]);
+            Log.d("jplee", "done_lo0");
+
+            lo[1] = (float) upper_lo - (float) (realW * (((double) dw - (double) lo[1]) / (double) dw));
             editor.putFloat("lo2", lo[1]);
+            Log.d("jplee", "done_lo1");
+
+            la[0] = (float) lower_la + (float) (realH * (((double) dh - (double) la[0]) / (double) dh));
             editor.putFloat("la1", la[0]);
+            Log.d("jplee", "done_la0");
+
+            la[1] = (float) lower_la + (float) (realH * (((double) dh - (double) la[1]) / (double) dh));
             editor.putFloat("la2", la[1]);
+            Log.d("jplee", "done_la1");
+            Log.d("jplee", "after scale:" + la[0] + "," + lo[0] + "//" + la[1] + "," + lo[1]);
 
-    //r        editor.putFloat("la1", Float.parseFloat(la1.getText().toString()));
-    //        editor.putFloat("lo1", Float.parseFloat(lo1.getText().toString()));
-    //        editor.putFloat("la2", Float.parseFloat(la2.getText().toString()));
-    //        editor.putFloat("lo2", Float.parseFloat(lo2.getText().toString()));
             editor.commit();
-        }catch(Exception e_empty){
-            ;//not commit();
+            Log.d("jplee", "done_commit");
+            MainActivity.isSetFlag = true;
+            //Log.d("jplee", "here3?");
+            isDone = true;
+            new ProcessSetHrEvent().execute(null, null, null);
+            finish();
+        } catch (Exception e_empty) {
+            isDone = false;
         }
-        MainActivity.isSetFlag = true;
-        Log.d("jplee", "here3?");
 
-        new ProcessSetHrEvent().execute(null, null, null);
-        finish();
     }
 
     private class ProcessSetHrEvent extends AsyncTask<Void, Void, Void> {
