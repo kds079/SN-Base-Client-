@@ -310,8 +310,12 @@ public class ListenerService extends Service  {
                 tuples = table.getTuple();
                 editor.putString("monName", (String) tuples[0]);
                 editor.putFloat("monLa", ((Double)tuples[1]).floatValue());
-                editor.putFloat("monLo", ((Double)tuples[2]).floatValue());
-                editor.putLong("monHr", (Integer) tuples[3]);
+                editor.putFloat("monLo", ((Double) tuples[2]).floatValue());
+                try {
+                    editor.putLong("monHr", (Long) tuples[3]);
+                } catch(Exception e){
+                    editor.putLong("monHr", (Integer) tuples[3]);
+                }
             }
             editor.commit();
         }
@@ -322,7 +326,11 @@ public class ListenerService extends Service  {
             table.reset();
             while (table.hasNext()) {
                 tuples = table.getTuple();
-                hr = (Integer)tuples[3];
+                try {
+                    hr = (Long)tuples[3];
+                } catch(Exception e){
+                    hr = (Integer)tuples[3];
+                }
             }
             return hr;
         }
@@ -342,6 +350,7 @@ public class ListenerService extends Service  {
         }
 
         private void startDistNoti(){
+
             NotificationManager nm2 = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);   // call notification manager
             Notification notification2 = new Notification(R.mipmap.distance, "Warning! far from you!", System.currentTimeMillis());   // icon, tickerText, when
             notification2.flags = Notification.FLAG_AUTO_CANCEL;
