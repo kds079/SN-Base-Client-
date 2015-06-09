@@ -193,6 +193,32 @@ public class ListenerService extends Service  {
             Log.d("dskim", "======>>> " + pKey1 + " : " + pKey2);
         }
 
+        public double calDistance(double lat1, double lon1, double lat2, double lon2){
+
+            double theta, dist;
+            theta = lon1 - lon2;
+            dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1))
+                    * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+            dist = Math.acos(dist);
+            dist = rad2deg(dist);
+
+            dist = dist * 60 * 1.1515;
+            dist = dist * 1.609344;    // ���� mile ���� km ��ȯ.
+            dist = dist * 1000.0;      // ����  km ���� m �� ��ȯ
+
+            return dist;
+        }
+
+        // degree to radian
+        private double deg2rad(double deg){
+            return (double)(deg * Math.PI / (double)180d);
+        }
+
+        // radian to degree
+        private double rad2deg(double rad){
+            return (double)(rad * (double)180d / Math.PI);
+        }
+
         @Override
         public void onReceiveResult(PlanKey planKey, ResultTable table) {
             printResult(planKey, table);
@@ -221,8 +247,8 @@ public class ListenerService extends Service  {
                 //gps[1] : longitude
                 //if distance condition
                 if (gpsFlag) {
-
-                    distance = Math.sqrt( Math.pow((protectorLocationLat - gps[0]) * 1800, 2) + Math.pow((protectorLocationLon - gps[1]) * 1500, 2) );
+                    distance = calDistance(protectorLocationLat, gps[0], protectorLocationLon, gps[1]);
+                    //distance = Math.sqrt( Math.pow((protectorLocationLat - gps[0]) * 1800, 2) + Math.pow((protectorLocationLon - gps[1]) * 1500, 2) );
                     Log.w("dskim", "Check Dist Event >> resultDist : " + distance  + " - setDist : " + dist);
                     // activate when distance_threshold is defined
                     if (distance > dist && distanceFlag == true) {
