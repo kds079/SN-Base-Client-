@@ -209,15 +209,19 @@ public class ListenerService extends Service  {
                 //if distance condition
                 if (gpsFlag) {
                     distance = Math.sqrt( Math.pow((protectorLocationLat - gps[0]), 2) + Math.pow((protectorLocationLon - gps[1]), 2) );
+                    Log.w("dskim", "Check Dist Event >> resultDist : " + distance  + " - setDist : " + dist);
                     // activate when distance_threshold is defined
                     if (distance > dist) {
+                        Log.w("dskim", "Check Hr Event >> startDistNoti");
                         startDistNoti();
                     }
                 }
 
                 //Check Hr Event
-                int hrResult = getHr(table);
+                long hrResult = getHr(table);
+                Log.w("dskim", "Check Hr Event >> hrResult : " + hrResult  + " - hr : " + hr);
                 if(hr > hrResult){
+                    Log.w("dskim", "Check Hr Event >> startHeartNoti");
                     startHeartNoti();
                 }
 
@@ -240,24 +244,27 @@ public class ListenerService extends Service  {
                 }
                 //gps[0] : latitude
                 //gps[1] : longitude
+                Log.w("dskim", "Check Region Event >> la1 : " + la1  + " la2 : " + la2 + " lo1 : " + lo1 + " lo2 : " + lo1);
+                Log.w("dskim", "Check Region Event >> resultLa : " + gps[0]  + " resultLo : " + gps[1]);
                 if(gps[0] < lowLa || gps[0] > highLa || gps[1] < lowLo || gps[1] > highLo){
+                    Log.w("dskim", "Check Hr Event >> startEscapeNoti");
                     startEscapeNoti();
                 }
 
-                new ProcessDistQuery().execute(null, null, null);
+//                new ProcessDistQuery().execute(null, null, null);
             } else {                                                    //Select query for distance event
                 Log.d("dskim", "onReceiveResut : event");
             }
             queryMap.remove(planKey);
         }
 
-        private int getHr(ResultTable table){
-            int hr=0;
+        private long getHr(ResultTable table){
+            long hr=0;
             Object[] tuples = null;
             table.reset();
             while (table.hasNext()) {
                 tuples = table.getTuple();
-                hr = (Integer)tuples[3];
+                hr = (Long)tuples[3];
             }
             return hr;
         }
@@ -391,8 +398,19 @@ public class ListenerService extends Service  {
                 {
                     SystemClock.sleep(3000);
                     Log.v("dskim", "==>>>  Query time : " + new Timestamp(new Date().getTime()));
+
+                    SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    int userSize = mPref.getInt("userSize", 0);
+                    StringBuffer userCondition = new StringBuffer();
+                    for(int i=0; i<userSize ; i++) {
+                        userCondition.append("name = '").append(mPref.getString("user" + i, "default")).append("' ");
+                        if (i != (userSize - 1)) {
+                            userCondition.append("or ");
+                        }
+                    }
                     String queryStmt = "SELECT name, latitude, longitude, hr, timestamp()\n"
-                            + "FROM profile, gps, node";
+                            + "FROM profile, gps, node\n"
+                            + "WHERE " + userCondition.toString();
 //                    String queryStmt = "SELECT name, latitude, longitude, timestamp()\n"
 //                            + "FROM profile, gps";
                     PlanKey planKey = clientConnector.executeQuery(queryStmt);
