@@ -251,11 +251,27 @@ public class ListenerService extends Service  {
                     startEscapeNoti();
                 }
 
-//                new ProcessDistQuery().execute(null, null, null);
+                setMonitorData(table);
+                new ProcessDistQuery().execute(null, null, null);
             } else {                                                    //Select query for distance event
                 Log.d("dskim", "onReceiveResut : event");
             }
             queryMap.remove(planKey);
+        }
+
+        private void setMonitorData(ResultTable table){
+            Object[] tuples = null;
+            SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences.Editor editor = mPref.edit();
+            table.reset();
+            while (table.hasNext()) {
+                tuples = table.getTuple();
+                editor.putString("monName", (String) tuples[0]);
+                editor.putFloat("monLa", ((Double)tuples[1]).floatValue());
+                editor.putFloat("monLo", ((Double)tuples[2]).floatValue());
+                editor.putLong("monHr", (Long) tuples[3]);
+            }
+            editor.commit();
         }
 
         private long getHr(ResultTable table){
