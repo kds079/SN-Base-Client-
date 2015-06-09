@@ -36,28 +36,32 @@
                 android:layout_column="0"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true"
-                android:layout_gravity="top" />
+                android:layout_gravity="top"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="La"
                 android:id="@+id/monitorLa"
-                android:layout_column="1" />
+                android:layout_column="1"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Lo"
                 android:id="@+id/monitorLo"
-                android:layout_column="2" />
+                android:layout_column="2"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Distance"
                 android:id="@+id/monitorDist"
-                android:layout_column="3" />
+                android:layout_column="3"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
         </TableRow>
 
         <TableRow
