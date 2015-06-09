@@ -199,6 +199,15 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
                 Float la2 = mPref.getFloat("la2", 0);
                 Float lo2 = mPref.getFloat("lo2", 0);
 
+                int userSize = mPref.getInt("userSize", 0);
+                StringBuffer userCondition = new StringBuffer();
+                for(int i=0; i<userSize ; i++) {
+                    userCondition.append("name = '").append(mPref.getString("user" + i, "default")).append("' ");
+                    if (i != (userSize - 1)) {
+                        userCondition.append("or ");
+                    }
+                }
+
                 ListenerService listenerService = ListenerService.getServiceObject();
                 ClientConnector clientConnector = listenerService.getClientConnector();
 
@@ -218,7 +227,10 @@ public class SetActivity extends ActionBarActivity implements View.OnClickListen
 
                 //Select query for distance event
                 queryStmt = "SELECT name, latitude, longitude, hr, timestamp()\n"
-                        + "FROM profile, gps, node";
+                        + "FROM profile, gps, node\n"
+                        + "WHERE " + userCondition.toString();
+                Log.w("dskim", "queryStmt : " + queryStmt);
+
                 planKey = clientConnector.executeQuery(queryStmt);
                 listenerService.setQueryMap(planKey, "DistEvent");
 
