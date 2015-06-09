@@ -45,6 +45,9 @@ public class ListenerService extends Service  {
     private double protectorLocationLon;
     private boolean gpsFlag = false;
     private double distance;
+    private boolean hrFlag = true;
+    private boolean escapeFlag = true;
+    private boolean distanceFlag = true;
 
 
     public ListenerService(){
@@ -220,18 +223,20 @@ public class ListenerService extends Service  {
                     distance = Math.sqrt( Math.pow((protectorLocationLat - gps[0]) * 1800, 2) + Math.pow((protectorLocationLon - gps[1]) * 1500, 2) );
                     Log.w("dskim", "Check Dist Event >> resultDist : " + distance  + " - setDist : " + dist);
                     // activate when distance_threshold is defined
-                    if (distance > dist) {
+                    if (distance > dist && distanceFlag == true) {
                         Log.w("dskim", "Check Hr Event >> startDistNoti");
                         startDistNoti();
+                        distanceFlag = false;
                     }
                 }
 
                 //Check Hr Event
                 long hrResult = getHr(table);
                 Log.w("dskim", "Check Hr Event >> hrResult : " + hrResult  + " - hr : " + hr);
-                if(hr > hrResult){
+                if(hr > hrResult && hrFlag == true){
                     Log.w("dskim", "Check Hr Event >> startHeartNoti");
                     startHeartNoti();
+                    hrFlag = false;
                 }
 
                 //Check Region Event
@@ -255,9 +260,10 @@ public class ListenerService extends Service  {
                 //gps[1] : longitude
                 Log.w("dskim", "Check Region Event >> la1 : " + la1  + " la2 : " + la2 + " lo1 : " + lo1 + " lo2 : " + lo1);
                 Log.w("dskim", "Check Region Event >> resultLa : " + gps[0]  + " resultLo : " + gps[1]);
-                if(gps[0] < lowLa || gps[0] > highLa || gps[1] < lowLo || gps[1] > highLo){
+                if((gps[0] < lowLa || gps[0] > highLa || gps[1] < lowLo || gps[1] > highLo) && escapeFlag == true){
                     Log.w("dskim", "Check Hr Event >> startEscapeNoti");
                     startEscapeNoti();
+                    escapeFlag = false;
                 }
 
                 setMonitorData(table);
