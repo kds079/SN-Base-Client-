@@ -131,9 +131,9 @@ public class MonitorActivity extends ActionBarActivity {
                                 //Log.v("lanakim", "hrs update : " + hrs[ii].toString());
                                 rcs[ii][0].setText(String.format("%d", hrs[ii]!=null?hrs[ii]:""));
                                 //Log.v("lanakim", "las update : " + las[ii].toString());
-                                rcs[ii][1].setText(String.format("%.2f", las[ii]!=null?las[ii]:""));
+                                rcs[ii][1].setText(String.format("%.5f", las[ii]!=null?las[ii]:""));
                                 //Log.v("lanakim", "los update : " + los[ii].toString());
-                                rcs[ii][2].setText(String.format("%.2f", los[ii]!=null?los[ii]:""));
+                                rcs[ii][2].setText(String.format("%.5f", los[ii]!=null?los[ii]:""));
                                 //Log.v("lanakim", "dis update : " + dis[ii].toString());
                                 rcs[ii][3].setText(String.format("%.2f", dis[ii]!=0?dis[ii]:""));
 

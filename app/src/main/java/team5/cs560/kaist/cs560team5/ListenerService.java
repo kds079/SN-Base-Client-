@@ -43,7 +43,7 @@ public class ListenerService extends Service  {
     private LocationManager mLocMgr;
     private double protectorLocationLat;
     private double protectorLocationLon;
-    private boolean gpsFlag = false;
+    private boolean gpsFlag = true;
     private double distance;
     private boolean hrFlag = true;
     private boolean escapeFlag = true;
@@ -246,13 +246,15 @@ public class ListenerService extends Service  {
             Float lo1 = mPref.getFloat("lo1", 0);
             Float la2 = mPref.getFloat("la2", 0);
             Float lo2 = mPref.getFloat("lo2", 0);
-
+            Log.d("dskim", "distance1");
             if( "getUser".equals(queryMap.get(planKey))) {          //for Select Activity
+                Log.d("dskim", "distance2");
                 Log.d("dskim", "onReceiveResut : getUser");
                 setUserList(table);
 //                queryMap.remove(planKey);
             } else if("DistEvent".equals(queryMap.get(planKey))) {  //Event query for hr, region
                 Log.d("dskim", "onReceiveResut : DistEvent");
+                Log.d("dskim", "distance3");
 
                 //Check Distnace Event
                 double[] gps = getGps(table);
@@ -300,7 +302,7 @@ public class ListenerService extends Service  {
                 }
                 //gps[0] : latitude
                 //gps[1] : longitude
-                Log.w("dskim", "Check Region Event >> la1 : " + la1  + " la2 : " + la2 + " lo1 : " + lo1 + " lo2 : " + lo1);
+                Log.w("dskim", "Check Region Event >> la1 : " + la1  + " la2 : " + la2 + " lo1 : " + lo1 + " lo2 : " + lo2);
                 Log.w("dskim", "Check Region Event >> resultLa : " + gps[0]  + " resultLo : " + gps[1]);
                 if((gps[0] < lowLa || gps[0] > highLa || gps[1] < lowLo || gps[1] > highLo) && escapeFlag == true){
                     Log.w("dskim", "Check Hr Event >> startEscapeNoti");
